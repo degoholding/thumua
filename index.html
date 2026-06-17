@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEGO Thu Mua - Phân Quyền</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-resizer" id="sidebar-resizer"></div>
+            <div class="sidebar-header">
+                <div class="logo-dot"></div>
+                <h1 class="logo-text">DEGO Thu Mua</h1>
+            </div>
+            
+            <nav class="sidebar-nav" id="sidebar-nav">
+                <!-- Group 1 -->
+                <div class="nav-group">
+                    <div class="nav-group-title">KHẢO SÁT</div>
+                    <ul class="nav-list">
+                        <li class="nav-item" data-page="page-intake">
+                            <span class="nav-icon">📋</span> Yêu cầu
+                        </li>
+                        <li class="nav-item" data-page="page-survey">
+                            <span class="nav-icon">🔍</span> Đánh giá NCC
+                        </li>
+                        <li class="nav-item" data-page="page-approve">
+                            <span class="nav-icon">✅</span> Duyệt
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Group 2 -->
+                <div class="nav-group">
+                    <div class="nav-group-title">MUA HÀNG</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <span class="nav-icon">📦</span> Đơn mua
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-icon">🚚</span> Vận chuyển
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-icon">💵</span> Chi NCC
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-icon">📒</span> Công nợ
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Group 3 -->
+                <div class="nav-group">
+                    <div class="nav-group-title">KHÁC</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <span class="nav-icon">⚠️</span> Sự cố
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-icon">📄</span> Hợp đồng
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-icon">🔄</span> Điều phối
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Group 4 -->
+                <div class="nav-group">
+                    <div class="nav-group-title">QUẢN LÝ</div>
+                    <ul class="nav-list">
+                        <li class="nav-item" data-page="page-dashboard">
+                            <span class="nav-icon">📊</span> Dashboard
+                        </li>
+                        <li class="nav-item" data-page="page-suppliers">
+                            <span class="nav-icon">🏢</span> Nhà cung cấp
+                        </li>
+                        <li class="nav-item active" data-page="page-users">
+                            <span class="nav-icon">👥</span> Người dùng
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+            <!-- Header -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn-hamburger" id="sidebar-toggle">☰</button>
+                </div>
+                <div class="topbar-right">
+                    <span class="user-info">DX Lead · Admin</span>
+                    <button class="btn-logout">Đăng xuất</button>
+                </div>
+            </header>
+
+            <!-- Page Content: Users -->
+            <div class="page-content active" id="page-users">
+                <div class="page-header">
+                    <div class="header-titles">
+                        <h2 class="page-title">Người dùng & phân quyền</h2>
+                        <p class="page-subtitle">Cấp quyền = thêm email + vai trò. "Khoá" đổi trạng thái sang nghỉ (không xoá). "Xóa" thu hồi hoàn toàn.</p>
+                    </div>
+                    <button class="btn-primary" id="btn-add-user">+ Cấp quyền</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Họ tên</th>
+                                <th>Vai trò</th>
+                                <th>Mã NSPT</th>
+                                <th>Trạng thái</th>
+                                <th class="text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-table-body">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Page Content: Intake -->
+            <div class="page-content" id="page-intake" style="display: none;">
+                <div class="page-header">
+                    <div class="header-titles">
+                        <h2 class="page-title">Danh sách Yêu cầu Thu mua</h2>
+                        <p class="page-subtitle">Nơi tiếp nhận yêu cầu từ các bộ phận và phân bổ cho NSTM xử lý.</p>
+                    </div>
+                    <button class="btn-primary" id="btn-add-request">+ Tạo Yêu cầu</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã PYC</th>
+                                <th>Ngày tạo</th>
+                                <th>Bộ phận YC</th>
+                                <th>Nội dung yêu cầu</th>
+                                <th>Số lượng</th>
+                                <th>NSTM Phụ trách</th>
+                                <th>Trạng thái</th>
+                                <th class="text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="intake-table-body">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal: Form Tạo Yêu Cầu -->
+            <div class="modal-overlay" id="modal-intake" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Tạo Yêu cầu Thu mua mới</h3>
+                        <button class="btn-close-modal" id="btn-close-intake">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-intake">
+                            <div class="form-group">
+                                <label>Bộ phận yêu cầu</label>
+                                <select class="form-control" required>
+                                    <option value="KD">Kinh doanh</option>
+                                    <option value="SX">Sản xuất</option>
+                                    <option value="LAB">Lab</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tên hàng hóa / Mô tả chi tiết</label>
+                                <textarea class="form-control" rows="3" required placeholder="Nhập tên vật tư, quy cách..."></textarea>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Số lượng</label>
+                                    <input type="number" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Đơn vị tính</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Ngày cần hàng</label>
+                                    <input type="date" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kho nhận</label>
+                                    <select class="form-control">
+                                        <option>Kho Nguyên Liệu</option>
+                                        <option>Kho Bao Bì</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>NSTM Phụ trách (QLTM phân bổ)</label>
+                                <select class="form-control">
+                                    <option value="">-- Chọn NSTM --</option>
+                                    <option value="HAU">Mr Hậu</option>
+                                    <option value="QUYEN">Ms Quyên</option>
+                                    <option value="TIEN">Mr Tiên</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="btn-cancel-intake">Hủy</button>
+                        <button type="submit" form="form-intake" class="btn-primary" id="btn-submit-intake">Lưu & Gửi Duyệt</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content: Survey -->
+            <div class="page-content" id="page-survey" style="display: none;">
+                <div class="page-header">
+                    <div class="header-titles">
+                        <h2 class="page-title">Đánh giá Nhà cung cấp</h2>
+                        <p class="page-subtitle">Nhập thông tin khảo sát báo giá từ ít nhất 2 NCC cho mỗi yêu cầu. Báo giá sẽ được QLTM duyệt.</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã PYC</th>
+                                <th>Tên hàng hóa</th>
+                                <th>Số lượng YC</th>
+                                <th>NSTM Phụ trách</th>
+                                <th>Số lượng NCC</th>
+                                <th>Lab Test</th>
+                                <th class="text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="survey-table-body">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal: Form Đánh Giá NCC -->
+            <div class="modal-overlay" id="modal-survey" style="display: none;">
+                <div class="modal-content" style="width: 800px; max-width: 95%;">
+                    <div class="modal-header">
+                        <h3 id="survey-modal-title">Khảo sát báo giá - PYC-002</h3>
+                        <button class="btn-close-modal" id="btn-close-survey">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="background: var(--active-bg); padding: 12px; border-radius: 6px; margin-bottom: 20px;">
+                            <strong>Nhu cầu:</strong> Mua 10 Lít Cồn y tế 90 độ dùng cho vệ sinh phòng thí nghiệm
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <h4 style="font-size: 15px; color: var(--primary-color);">Danh sách NCC Khảo sát</h4>
+                            <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" id="btn-add-ncc">+ Thêm NCC Mới</button>
+                        </div>
+                        
+                        <!-- NCC Card 1 -->
+                        <div class="ncc-card">
+                            <div class="ncc-card-header">
+                                <strong>1. NCC Hóa chất Á Châu</strong>
+                                <span class="badge badge-admin">Chưa duyệt</span>
+                            </div>
+                            <div class="ncc-card-body">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Đơn giá (VNĐ)</label>
+                                        <input type="number" class="form-control" value="25000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Thuế VAT (%)</label>
+                                        <select class="form-control">
+                                            <option>8%</option>
+                                            <option selected>10%</option>
+                                            <option>0%</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>MOQ (SL tối thiểu)</label>
+                                        <input type="text" class="form-control" value="5 Lít">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Thời gian giao (Ngày)</label>
+                                        <input type="number" class="form-control" value="2">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Đánh giá của Lab (Nếu có mẫu)</label>
+                                    <input type="text" class="form-control" value="Đạt tiêu chuẩn y tế" style="background: #f9fafb; border-color: #bbf7d0;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NCC Card 2 -->
+                        <div class="ncc-card" style="margin-top: 16px;">
+                            <div class="ncc-card-header">
+                                <strong>2. Vật tư Y tế Việt Mỹ</strong>
+                                <span class="badge badge-admin">Chưa duyệt</span>
+                            </div>
+                            <div class="ncc-card-body">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Đơn giá (VNĐ)</label>
+                                        <input type="number" class="form-control" value="28000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Thuế VAT (%)</label>
+                                        <select class="form-control">
+                                            <option>8%</option>
+                                            <option selected>10%</option>
+                                            <option>0%</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>MOQ (SL tối thiểu)</label>
+                                        <input type="text" class="form-control" value="1 Lít">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Thời gian giao (Ngày)</label>
+                                        <input type="number" class="form-control" value="1">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Đánh giá của Lab (Nếu có mẫu)</label>
+                                    <input type="text" class="form-control" placeholder="Đang chờ kết quả...">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-secondary" id="btn-cancel-survey">Đóng</button>
+                        <button class="btn-primary" id="btn-submit-survey">Lưu & Trình Duyệt</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content: Suppliers (MASTER_NCC) -->
+            <div class="page-content" id="page-suppliers" style="display: none;">
+                <div class="page-header">
+                    <div class="header-titles">
+                        <h2 class="page-title">Quản lý Nhà cung cấp</h2>
+                        <p class="page-subtitle">Danh mục gốc (Master Data) lưu trữ thông tin các Nhà cung cấp đã được xác minh.</p>
+                    </div>
+                    <button class="btn-primary" id="btn-add-supplier">+ Thêm Nhà cung cấp</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã NCC</th>
+                                <th>Tên Nhà cung cấp</th>
+                                <th>Nhóm hàng hóa</th>
+                                <th>Số điện thoại</th>
+                                <th>Email</th>
+                                <th class="text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supplier-table-body">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal: Form Tạo Nhà cung cấp -->
+            <div class="modal-overlay" id="modal-supplier" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Thêm Nhà cung cấp mới</h3>
+                        <button class="btn-close-modal" id="btn-close-supplier">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-supplier">
+                            <div class="form-group">
+                                <label>Tên Nhà cung cấp (Pháp nhân hoặc Thương hiệu)</label>
+                                <input type="text" class="form-control" required placeholder="VD: Công ty TNHH Nhựa Rạng Đông">
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Số điện thoại liên hệ</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email liên hệ</label>
+                                    <input type="email" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Nhóm hàng hóa cung cấp chính</label>
+                                <select class="form-control" required>
+                                    <option value="">-- Chọn nhóm --</option>
+                                    <option value="Bao Bì">Bao Bì</option>
+                                    <option value="Nguyên Liệu">Nguyên Liệu</option>
+                                    <option value="Vật tư Y tế">Vật tư Y tế</option>
+                                    <option value="Hóa Chất">Hóa Chất</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="btn-cancel-supplier">Hủy</button>
+                        <button type="submit" form="form-supplier" class="btn-primary" id="btn-submit-supplier">Lưu Nhà cung cấp</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
