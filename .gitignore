@@ -1,0 +1,23 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Environment variables
+.env
+.env.test
+.env.production
+
+# Mac OS files
+.DS_Store
+
+# Temporary / Generated / Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Large binaries and documents
+*.zip
+*.tar.gz
+scratch_pdf/
