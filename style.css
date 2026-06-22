@@ -564,3 +564,204 @@ textarea.form-control {
 .ncc-card-body {
     padding: 16px;
 }
+
+/* Modal Improvements */
+.modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    resize: both;
+    overflow: auto;
+    width: 70%;
+    max-width: 95%;
+}
+
+/* Product Table inside Modal */
+#pyc-products-table th,
+#pyc-products-table td {
+    border: 1px solid var(--border-color);
+}
+#pyc-products-table input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 13px;
+}
+#pyc-products-table input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+.btn-remove-row {
+    background: transparent;
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 12px;
+}
+.btn-remove-row:hover {
+    background: var(--danger-color);
+    color: white;
+}
+
+/* --- Print Styles --- */
+.print-container {
+    display: none; /* Hidden on screen */
+    background: white;
+    color: black;
+    font-family: 'Times New Roman', Times, serif;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.print-header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.print-logo h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #000;
+}
+
+.print-doc-info p, .print-pyc-code p {
+    margin: 2px 0;
+    font-size: 13px;
+}
+
+.print-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.print-title h1 {
+    font-size: 22px;
+    margin: 0 0 10px 0;
+}
+
+.print-title p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.print-section {
+    margin-bottom: 20px;
+}
+
+.print-section-title-box {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #B4C6E7;
+    padding: 4px 8px;
+    margin-bottom: 5px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.print-info-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.print-info-table td {
+    padding: 2px 0;
+    vertical-align: top;
+    font-size: 13px;
+}
+
+.print-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5px;
+}
+
+.print-items-table th, .print-items-table td {
+    border: 1px solid black;
+    padding: 5px;
+    font-size: 13px;
+    text-align: left;
+}
+
+.print-items-table th {
+    text-align: center;
+    font-weight: bold;
+}
+
+.print-signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    page-break-inside: avoid;
+}
+
+.sign-box {
+    text-align: center;
+    width: 23%;
+}
+
+.sign-box p {
+    margin: 5px 0;
+}
+
+.sign-note {
+    font-style: italic;
+    font-size: 12px;
+}
+
+.sign-line {
+    border-bottom: 1.5px solid black;
+    margin-top: 60px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Print Media Query */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    .print-container, .print-container * {
+        visibility: visible;
+    }
+    
+    .print-container {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+    
+    @page {
+        size: A4;
+        margin: 15mm;
+    }
+}
+
+/* Select2 overrides */
+.select2-container .select2-selection--single {
+    height: 40px !important;
+    padding: 5px 12px;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 6px !important;
+    display: flex;
+    align-items: center;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: normal !important;
+    padding-left: 0 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px !important;
+}
