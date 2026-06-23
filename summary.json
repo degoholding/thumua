@@ -1,0 +1,490 @@
+{
+  "stats": {
+    "total": 184,
+    "byCategory": {
+      "Trao đổi và phối hợp công việc": 14,
+      "IT Helpdesk": 72,
+      "Công tác hành chính": 24,
+      "Vận hành & Hỗ trợ": 9,
+      "Phân tích yêu cầu & Thiết kế": 3,
+      "Công việc khác": 1,
+      "Duy trì ổn định Website": 6,
+      "Lập trình & Xây dựng": 11,
+      "Kiểm thử": 13,
+      "Họp nội bộ & họp thương hiệu": 5,
+      "Viết tài liệu": 8,
+      "Họp hàng ngày": 12,
+      "Test dữ liệu": 5,
+      "Công tác nhân sự": 1
+    },
+    "byStatus": {
+      "Ðã hoàn thành": 182,
+      "undefined": 1,
+      "Đang thực hiện": 1
+    }
+  },
+  "erpTasks": [
+    {
+      "category": "Công tác hành chính",
+      "taskName": "[ERP] Đề xuất giải pháp và xác nhận thu mua sản phẩm VPS Tăng tốc 5 cho Team theo yêu cầu của Q.Phú-DX",
+      "status": "Ðã hoàn thành",
+      "startDate": 46146,
+      "endDate": 46146
+    },
+    {
+      "category": "Công tác hành chính",
+      "taskName": "[ERP] Tìm hiểu giải pháp VPS trên AWS Lightsail Virtual Servers feature",
+      "status": "Ðã hoàn thành",
+      "startDate": 46146,
+      "endDate": 46146
+    },
+    {
+      "category": "Vận hành & Hỗ trợ",
+      "taskName": "[ERP] Dự toán chi phí các hạng mục trong cuộc họp ngày 29/04",
+      "status": "Ðã hoàn thành",
+      "startDate": 46147,
+      "endDate": 46147
+    },
+    {
+      "category": "Công tác hành chính",
+      "taskName": "[ERP] Lập PĐX, ĐNTT các chi phí trong hạng mục 29/04",
+      "status": "Ðã hoàn thành",
+      "startDate": 46147,
+      "endDate": 46147
+    },
+    {
+      "category": "Công tác hành chính",
+      "taskName": "[ERP] Check VAT, tạo tài khoản đăng ký, tìm giải pháp lấy hóa đơn VAT chi phí Google về cho công ty",
+      "status": "Ðã hoàn thành",
+      "startDate": 46147,
+      "endDate": 46147
+    },
+    {
+      "category": "Phân tích yêu cầu & Thiết kế",
+      "taskName": "[ERP] Phân tích dữ liệu trong file mô tả quy trình thu mua",
+      "status": "Ðã hoàn thành",
+      "startDate": 46147,
+      "endDate": 46147
+    },
+    {
+      "category": "Công tác hành chính",
+      "taskName": "[ERP] Hoàn tất mua và cấp phát công cụ VSP tăng tốc 5",
+      "status": "Ðã hoàn thành",
+      "startDate": 46148,
+      "endDate": 46148
+    },
+    {
+      "category": "Trao đổi và phối hợp công việc",
+      "taskName": "[ERP] Họp triển khai quy trình thu mua với anh Dững, chị Quyên, Ngân, Phú và Cường",
+      "status": "Ðã hoàn thành",
+      "startDate": 46148,
+      "endDate": 46148
+    },
+    {
+      "category": "Công tác hành chính",
+      "taskName": "[ERP] Lập PĐX, ĐNTT các chi phí công cụ Ai cho team DX.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46149,
+      "endDate": 46149
+    },
+    {
+      "category": "Phân tích yêu cầu & Thiết kế",
+      "taskName": "[ERP] Tổng hợp Recap cuộc họp Thu mua - IT trong 2 ngày 06-07/05/2026",
+      "status": "Ðã hoàn thành",
+      "startDate": 46150,
+      "endDate": 46150
+    },
+    {
+      "category": "Trao đổi và phối hợp công việc",
+      "taskName": "[ERP] Họp Roadmap sản phẩm với Phú, Cường, Trang",
+      "status": "Ðã hoàn thành",
+      "startDate": 46151,
+      "endDate": 46151
+    },
+    {
+      "category": "Trao đổi và phối hợp công việc",
+      "taskName": "[ERP] Họp Roadmap sản phẩm với Phú, Cường, Trang",
+      "status": "Ðã hoàn thành",
+      "startDate": 46151,
+      "endDate": 46151
+    },
+    {
+      "category": "Công tác hành chính",
+      "taskName": "[ERP] Hoàn tất mua và cấp phát công cụ Ai cho team DX.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46153,
+      "endDate": 46153
+    },
+    {
+      "category": "Trao đổi và phối hợp công việc",
+      "taskName": "[ERP] Thảo luận với Bảo về các quy trình của Thu mua",
+      "status": "Ðã hoàn thành",
+      "startDate": 46155,
+      "endDate": 46155
+    },
+    {
+      "category": "Trao đổi và phối hợp công việc",
+      "taskName": "[ERP] Họp với Ngân, Phú và Bảo review Ngân thao tác các QT sản xuất & thu mua",
+      "status": "Ðã hoàn thành",
+      "startDate": 46156,
+      "endDate": 46156
+    },
+    {
+      "category": "Trao đổi và phối hợp công việc",
+      "taskName": "[ERP] Thảo luận với Bảo về các quy trình của Thu mua",
+      "status": "Ðã hoàn thành",
+      "startDate": 46156,
+      "endDate": 46156
+    },
+    {
+      "category": "Trao đổi và phối hợp công việc",
+      "taskName": "[ERP] Thu thập dữ liệu trên \"VTBB - THEO DÕI VẬT TƯ 2025\" \r\nPhân tích và tổng hợp dữ liệu.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46156,
+      "endDate": 46156
+    },
+    {
+      "category": "Lập trình & Xây dựng",
+      "taskName": "Xây dựng file BRD_He_Thong_Quan_Ly_Thu_Mua.md, Bo_Quy_Trinh_Thu_Mua_Phan_Tich.md \r\nTổng hợp tài liệu Thu Mua, gửi Bảo.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46156,
+      "endDate": 46156
+    },
+    {
+      "category": "Kiểm thử",
+      "taskName": "Test hệ thống NextERP theo yêu cầu của Bảo.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46162,
+      "endDate": 46162
+    },
+    {
+      "category": "Lập trình & Xây dựng",
+      "taskName": "Hoàn tất chương trình quét và kiểm tra phần mềm trên PC/Laptop, đồng bộ kết quả báo cáo về Google Sheet.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46165,
+      "endDate": 46165
+    },
+    {
+      "category": "Lập trình & Xây dựng",
+      "taskName": "Hỗ trợ phiếu đề xuất mua hàng cho công cụ NextERP theo yêu cầu của Bảo.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46165,
+      "endDate": 46165
+    },
+    {
+      "category": "Kiểm thử",
+      "taskName": "Test công cụ NextERP theo yêu cầu của Bảo.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46171,
+      "endDate": 46171
+    },
+    {
+      "category": "Viết tài liệu",
+      "taskName": "[Dego ERP]\r\nViết tài liệu hướng dẫn sử dụng công cụ Module thu mua trên Erp.degoholding.vn",
+      "status": "Ðã hoàn thành",
+      "startDate": 46172,
+      "endDate": 46172
+    },
+    {
+      "category": "Viết tài liệu",
+      "taskName": "[Dego ERP]\r\nHỗ trợ Bảo thực hiện bộ câu hỏi khảo sát nghiệp vụ & kỹ thuật cho hệ thống Dego ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46172,
+      "endDate": 46172
+    },
+    {
+      "category": "Viết tài liệu",
+      "taskName": "[Dego ERP]\r\nHỗ trợ Bảo kiểm tra và hoàn tất Báo cáo chức năng cho hệ thống Dego ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46172,
+      "endDate": 46172
+    },
+    {
+      "category": "Họp nội bộ & họp thương hiệu",
+      "taskName": "Họp nội bộ trao đổi công việc, thực hiện theo quy trình Scrum (mô hình Agile) để hỗ trợ cho quản lý công việc trên Dego ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46174,
+      "endDate": 46174
+    },
+    {
+      "category": "Họp nội bộ & họp thương hiệu",
+      "taskName": "Họp chốt buổi triển khai hệ thống Next ERP với Cường-DX",
+      "status": "Ðã hoàn thành",
+      "startDate": 46174,
+      "endDate": 46174
+    },
+    {
+      "category": "Lập trình & Xây dựng",
+      "taskName": "[Misa VPN]\r\nTạo file Brief hệt hống và tổng hợp code chưa build gửi Cường-DX",
+      "status": "Ðã hoàn thành",
+      "startDate": 46175,
+      "endDate": 46175
+    },
+    {
+      "category": "Kiểm thử",
+      "taskName": "Test công cụ Dego ERP.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46176,
+      "endDate": 46177
+    },
+    {
+      "category": "Viết tài liệu",
+      "taskName": "Lập bảng đối chiếu hướng dẫn sử dụng công cụ Dego ERP v1.0. Liệt kê chi tiết từng chức năng ứng với từng bước trên quy trình của Team thu mua.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46177,
+      "endDate": 46178
+    },
+    {
+      "category": "Viết tài liệu",
+      "taskName": "Viết tài liệu hướng dẫn sử dụng công cụ Dego ERP v1.0",
+      "status": "Ðã hoàn thành",
+      "startDate": 46177,
+      "endDate": 46178
+    },
+    {
+      "category": "Viết tài liệu",
+      "taskName": "Báo cáo chức năng cập nhật trên hệ thống Dego ERP.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46179,
+      "endDate": 46179
+    },
+    {
+      "category": "Họp hàng ngày",
+      "taskName": "Báo cáo tiến độ Dego ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": "08/06/2026",
+      "endDate": 46181
+    },
+    {
+      "category": "Test dữ liệu",
+      "taskName": "[ERP] Kiểm tra, đối chiếu dữ liệu giữa Google Drive và ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46181,
+      "endDate": 46181
+    },
+    {
+      "category": "Test dữ liệu",
+      "taskName": "Báo cáo chức năng cập nhật trên hệ thống Dego ERP.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46181,
+      "endDate": 46181
+    },
+    {
+      "category": "Họp hàng ngày",
+      "taskName": "Báo cáo tiến độ Dego ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46182,
+      "endDate": 46182
+    },
+    {
+      "category": "Trao đổi và phối hợp công việc",
+      "taskName": "Xác nhận với bên thu mua, sau giai đoạn kiểm thử, tính năng trên ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": "09/06/2026",
+      "endDate": 46182
+    },
+    {
+      "category": "Viết tài liệu",
+      "taskName": "Biên bản UAT Dego ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46182,
+      "endDate": 46182
+    },
+    {
+      "category": "Test dữ liệu",
+      "taskName": "[ERP] Kiểm tra, đối chiếu dữ liệu giữa Google Drive và ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46182,
+      "endDate": 46182
+    },
+    {
+      "category": "Họp hàng ngày",
+      "taskName": "Báo cáo tiến độ Dego ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46183,
+      "endDate": 46183
+    },
+    {
+      "category": "Họp hàng ngày",
+      "taskName": "Chốt thông tin bảng mapping dữ liệu lên ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46183,
+      "endDate": 46183
+    },
+    {
+      "category": "Test dữ liệu",
+      "taskName": "[ERP] Kiểm tra, đối chiếu dữ liệu giữa Google Drive và ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46183,
+      "endDate": 46183
+    },
+    {
+      "category": "Họp hàng ngày",
+      "taskName": "Báo cáo tiến độ Dego ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": "11/06/2026",
+      "endDate": 46184
+    },
+    {
+      "category": "Test dữ liệu",
+      "taskName": "[ERP] Kiểm tra, đối chiếu dữ liệu giữa Google Drive và ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46184,
+      "endDate": 46184
+    },
+    {
+      "category": "Họp hàng ngày",
+      "taskName": "Báo cáo tiến độ Dego ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46186,
+      "endDate": 46186
+    },
+    {
+      "category": "Kiểm thử",
+      "taskName": "[ERP] Cập nhật email trên hệ thống theo thiết kế mới",
+      "status": "Ðã hoàn thành",
+      "startDate": 46186,
+      "endDate": 46186
+    },
+    {
+      "category": "Kiểm thử",
+      "taskName": "[ERP] Cập nhật thông tin Công ty https://erp.degoholding.vn/desk/company",
+      "status": "Ðã hoàn thành",
+      "startDate": 46186,
+      "endDate": 46186
+    },
+    {
+      "category": "Kiểm thử",
+      "taskName": "[ERP] Gắn thông tin Công ty và Phòng ban vào Người dùng",
+      "status": "Ðã hoàn thành",
+      "startDate": 46186,
+      "endDate": 46186
+    },
+    {
+      "category": "Kiểm thử",
+      "taskName": "[ERP] Cập nhật thông tin Bộ phận Department https://erp.degoholding.vn/desk/department",
+      "status": "Ðã hoàn thành",
+      "startDate": 46186,
+      "endDate": 46186
+    },
+    {
+      "category": "Họp hàng ngày",
+      "taskName": "Báo cáo tiến độ Dego ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46188,
+      "endDate": 46188
+    },
+    {
+      "category": "Họp hàng ngày",
+      "taskName": "Báo cáo tiến độ Dego ERP",
+      "status": "Ðã hoàn thành",
+      "startDate": 46189,
+      "endDate": 46189
+    },
+    {
+      "category": "Họp nội bộ & họp thương hiệu",
+      "taskName": "Trao đổi giải pháp phát triển chức năng mapping dữ liệu từ ERP lên Google Sheet.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46189,
+      "endDate": 46189
+    },
+    {
+      "category": "Viết tài liệu",
+      "taskName": "Cập nhật file tài liệu hướng dẫn sử dụng ERP.\r\nFormat lại trình bày theo hướng docs.github",
+      "status": "Ðã hoàn thành",
+      "startDate": 46189,
+      "endDate": 46189
+    },
+    {
+      "category": "Kiểm thử",
+      "taskName": "Test lại luồng thực hiện 1 yêu cầu thu mua trên ERP.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46190,
+      "endDate": 46190
+    },
+    {
+      "category": "Phân tích yêu cầu & Thiết kế",
+      "taskName": "[GGS Nâng cao]\r\nLập kế hoạch thực hiện GGS nâng cao",
+      "status": "Ðã hoàn thành",
+      "startDate": 46190,
+      "endDate": 46190
+    },
+    {
+      "category": "Lập trình & Xây dựng",
+      "taskName": "[GGS Nâng cao]\r\nLập inventory 26 file: phân loại file dữ liệu gốc / báo cáo / quy trình / trùng-bỏ.\r\nChốt file dữ liệu gốc làm trung tâm.\r\nDanh sách cột chuẩn + kiểu dữ liệu + bắt buộc/không + ví dụ.\r\nQuy ước sheet/cột/mã, bám sheet 'QUY TẮC MÃ' có sẵn.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46190,
+      "endDate": 46190
+    },
+    {
+      "category": "Lập trình & Xây dựng",
+      "taskName": "Loại bỏ file trung và sheet dư thừa \r\nĐưa NCC, mã VTBB/NL, công ty, tiêu chuẩn về 1 sheet master; nơi khác tham chiếu. \r\nHợp nhất giao dịch HẬU/TIÊN/DƯ/QUYÊN thành 1 bảng + cột 'Người mua'.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46191,
+      "endDate": 46191
+    },
+    {
+      "category": "Lập trình & Xây dựng",
+      "taskName": "[GGS Nâng cao]\r\nTạo giao diện mẫu cho GGS dựa theo thiết kế của Phú-DX",
+      "status": "Ðã hoàn thành",
+      "startDate": 46191,
+      "endDate": 46191
+    },
+    {
+      "category": "Lập trình & Xây dựng",
+      "taskName": "[GGS Nâng cao]\r\nXử lý file dữ liệu Data Thu Mua",
+      "status": "Ðã hoàn thành",
+      "startDate": 46191,
+      "endDate": 46192
+    },
+    {
+      "category": "Lập trình & Xây dựng",
+      "taskName": "[GGS Nâng cao]\r\nTạo file data chuẩn cho Yêu cầu thu mua, chuẩn hóa dữ liệu bảng dữ liệu.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46193,
+      "endDate": 46193
+    },
+    {
+      "category": "Kiểm thử",
+      "taskName": "[ERP] Test mapping dữ liệu khảo sát trên https://erp.degoholding.vn/desk/company",
+      "status": "Ðã hoàn thành",
+      "startDate": 46193,
+      "endDate": 46193
+    },
+    {
+      "category": "Họp hàng ngày",
+      "taskName": "Chốt nội dung công việc GGS nâng cao chuẩn bị cho họp demo vào cuối ngày.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46195,
+      "endDate": 46195
+    },
+    {
+      "category": "Lập trình & Xây dựng",
+      "taskName": "[GGS Nâng cao]\r\nChuyển đổi dữ liệu sang dạng bảng để hỗ trợ phát triển chức năng GGS nâng cao",
+      "status": "Ðã hoàn thành",
+      "startDate": 46195,
+      "endDate": 46195
+    },
+    {
+      "category": "Lập trình & Xây dựng",
+      "taskName": "[GGS Nâng cao]\r\nBuild hệ thống tạo phiếu yêu cầu cho bộ phận thu mua.",
+      "status": "Ðã hoàn thành",
+      "startDate": 46195,
+      "endDate": 46195
+    },
+    {
+      "category": "Kiểm thử",
+      "taskName": "[GGS Nâng cao]\r\nTest chức năng tạo phiếu mua hàng https://gsthumua.degoholding.vn/mua-hang",
+      "status": "Ðã hoàn thành",
+      "startDate": 46195,
+      "endDate": 46195
+    },
+    {
+      "category": "Công tác nhân sự",
+      "taskName": "Viết quy trình phát triển sản phẩm Dego ERP theo yêu cầu của Q.Phú-DX.",
+      "status": "Đang thực hiện",
+      "startDate": 46196,
+      "endDate": 46196
+    }
+  ]
+}

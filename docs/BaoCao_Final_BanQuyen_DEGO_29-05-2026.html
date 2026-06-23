@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="UTF-8">
+<title>Báo cáo Final · Bản quyền phần mềm · DEGO Holding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ============================ DESIGN TOKENS ============================ */
+:root{
+  /* --- MÀU SẮC (trích xuất hex từ file gốc) --- */
+  --teal:        #1E7F9C;   /* màu chủ đạo: thanh đề mục, header bảng, badge */
+  --teal-dark:   #115E7D;   /* teal đậm: badge số La Mã, viền nhấn */
+  --navy:        #1A4D6B;   /* xanh navy: tiêu đề lớn, chữ in đậm quan trọng */
+  --green:       #6DBF3C;   /* xanh lá logo: viền callout success, nhấn */
+  --red:         #C0392B;   /* đỏ: highlight TOP / số tiền tổng nổi bật */
+  --amber:       #E0A526;   /* vàng gold: viền callout cảnh báo/ngân sách */
+
+  --ink:         #1F2937;   /* chữ thân bài */
+  --gray:        #5B6770;   /* chữ phụ */
+  --gray-en:     #8A95A0;   /* nhãn song ngữ tiếng Anh (mờ hơn) */
+  --line:        #D2DBE2;   /* đường kẻ bảng / divider */
+  --link:        #1A5FB4;   /* link xanh gạch chân */
+
+  /* --- NỀN CALLOUT --- */
+  --bg-warn:     #FFF6E0;   /* nền box ngân sách / cần phê duyệt (kem) */
+  --bg-info:     #E8F3F8;   /* nền box thông tin (xanh nhạt) */
+  --bg-ok:       #E6F4EA;   /* nền box đạt mục tiêu / kết luận (xanh lá nhạt) */
+  --bg-row-alt:  #F4F8FA;   /* nền dòng bảng xen kẽ (rất nhạt) */
+
+  /* --- FONT --- */
+  --font:        'Inter','Segoe UI',Arial,sans-serif;
+
+  /* --- KÍCH THƯỚC / KHOẢNG CÁCH --- */
+  --pad-page:    9mm 16mm 14mm;      /* lề trong trang: top giảm còn ~50% */
+  --radius:      4px;                /* bo góc callout/badge */
+  --gap:         14px;               /* khoảng cách dọc giữa khối */
+}
+
+/* ============================ KHUNG TRANG A4 ============================ */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#5b6670;font-family:var(--font);color:var(--ink);
+     -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+.page{
+  width:210mm;min-height:297mm;background:#fff;margin:10mm auto;
+  padding:var(--pad-page);position:relative;
+  display:flex;flex-direction:column;
+  font-size:10.5pt;line-height:1.5;
+}
+@media print{
+  body{background:#fff;}
+  .page{margin:0;box-shadow:none;page-break-after:always;}
+}
+@page{size:A4;margin:0;}
+
+/* ============================ RUNNING HEADER ============================ */
+.rh{display:flex;justify-content:space-between;align-items:flex-start;
+    border-bottom:2px solid var(--teal);padding-bottom:6px;margin-bottom:14px;}
+/* Logo SVG (Dego_Holding_Logo) — inline trong header */
+.logo svg{height:40px;width:auto;display:block;}
+.rh-meta{text-align:right;font-size:7.5pt;color:var(--gray);line-height:1.5;}
+.rh-meta b{display:block;font-size:11pt;color:var(--navy);letter-spacing:.5px;}
+.rh-meta i{display:block;font-style:italic;color:var(--gray-en);font-size:7pt;letter-spacing:1px;}
+
+/* ============================ RUNNING FOOTER ============================ */
+.rf{margin-top:auto;border-top:1px solid var(--line);padding-top:6px;
+    font-size:7.5pt;color:var(--gray);}
+/* grid 1fr/auto/1fr → cụm giữa luôn canh chính giữa trang */
+.rf-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;font-weight:600;}
+.rf-row .l{text-align:left;}
+.rf-row .c{text-align:center;color:var(--gray-en);font-weight:400;}
+.rf-row .r{text-align:right;}
+.rf-sub{text-align:center;font-style:italic;color:var(--gray-en);font-size:7pt;margin-top:2px;}
+
+/* ============================ TIÊU ĐỀ LỚN (TRANG BÌA) ============================ */
+.doc-title{font-size:21pt;font-weight:800;color:var(--navy);text-align:center;
+           letter-spacing:-.3px;margin:12px 0 4px;line-height:1.12;}
+.doc-subtitle{text-align:center;color:var(--gray);font-size:10pt;margin-bottom:16px;}
+
+/* ============================ BẢNG METADATA (đầu báo cáo) ============================ */
+.meta{width:100%;border-collapse:collapse;margin-bottom:18px;}
+.meta td{border:1px solid var(--line);padding:8px 12px;vertical-align:top;font-size:9.5pt;}
+.meta .k{width:21%;background:var(--bg-info);border-left:4px solid var(--teal);}
+.meta .k b{color:var(--teal);display:block;font-size:9.5pt;}
+.meta .k i{color:var(--gray-en);font-style:italic;font-size:8pt;font-weight:400;}
+.meta .v{width:29%;}
+
+/* ============================ NHÃN "PHẦN X" + ĐỀ MỤC ============================ */
+.part-label{font-size:10.8pt;font-weight:700;letter-spacing:.5px;color:var(--navy);
+            margin:6px 0 4px;}
+.section{display:flex;align-items:stretch;margin-bottom:14px;border-radius:var(--radius);
+         overflow:hidden;}
+/* badge số đề mục: nền XANH LÁ, chữ trắng */
+.section .num{background:var(--green);color:#fff;font-weight:800;font-size:15pt;
+              display:flex;align-items:center;justify-content:center;width:44px;flex:none;}
+.section .bar{background:var(--teal);color:#fff;flex:1;padding:10px 16px;
+              display:flex;align-items:baseline;gap:12px;}
+.section .bar b{font-size:13.5pt;font-weight:700;letter-spacing:.3px;color:#fff;}
+.section .bar span{font-size:9.5pt;font-weight:400;opacity:.85;font-style:italic;}
+
+/* ============================ ĐỀ MỤC CON "1. 2. 3." ============================ */
+.h3{font-size:11pt;font-weight:700;color:var(--navy);margin:14px 0 8px;}
+
+/* ============================ THÂN BÀI ============================ */
+p{margin-bottom:var(--gap);}
+.lead{color:var(--ink);}            /* đoạn dẫn */
+strong,b{color:var(--navy);}        /* chữ đậm = navy */
+.fig{color:var(--teal);font-weight:700;}  /* số liệu nhấn = teal */
+a{color:var(--link);text-decoration:underline;word-break:break-all;}
+
+ul{margin:0 0 var(--gap) 0;padding-left:0;list-style:none;}
+ul li{position:relative;padding-left:18px;margin-bottom:6px;}
+ul li::before{content:"•";color:var(--teal);position:absolute;left:2px;font-weight:700;}
+
+/* ============================ BẢNG DỮ LIỆU ============================ */
+table.data{width:100%;border-collapse:collapse;margin-bottom:var(--gap);font-size:9pt;}
+table.data thead th{background:var(--teal);color:#fff;font-weight:700;text-align:left;
+                    padding:9px 10px;border:1px solid var(--teal);vertical-align:top;}
+table.data thead th small{display:block;font-weight:400;font-size:7.5pt;opacity:.8;font-style:italic;}
+table.data tbody td{border:1px solid var(--line);padding:8px 10px;vertical-align:top;}
+table.data tbody tr:nth-child(even){background:var(--bg-row-alt);}
+table.data td.num,table.data th.num{text-align:right;white-space:nowrap;}
+table.data .top b{color:var(--red);}              /* highlight TOP (đỏ) */
+table.data tr.total td{font-weight:700;background:#EAF3F7;border-top:2px solid var(--teal);}
+table.data tr.total td .money{color:var(--red);}   /* số tiền tổng = đỏ */
+.dash{color:var(--gray-en);}                        /* dấu — cho ô trống */
+
+/* ============================ CALLOUT (3 BIẾN THỂ) ============================ */
+.callout{border-radius:var(--radius);padding:12px 16px;margin-bottom:var(--gap);
+         border-left:5px solid;font-size:9.5pt;}
+.callout .ct{display:block;font-weight:700;color:var(--navy);margin-bottom:4px;font-size:10pt;}
+.callout.warn{background:var(--bg-warn);border-left-color:var(--amber);}
+.callout.info{background:var(--bg-info);border-left-color:var(--teal);}
+.callout.ok  {background:var(--bg-ok);  border-left-color:var(--green);}
+
+/* ============================ KHỐI CHỮ KÝ ============================ */
+.signs{display:flex;justify-content:space-around;text-align:center;margin-top:30px;gap:40px;}
+.signs .col{flex:1;}
+.signs .role{font-weight:700;color:var(--navy);font-size:10.5pt;}
+.signs .role i{display:block;font-weight:400;font-style:italic;color:var(--gray-en);font-size:8pt;}
+.signs .name{margin-top:64px;font-weight:700;color:var(--navy);}
+.signs .name i{display:block;font-weight:400;font-style:normal;color:var(--gray);font-size:9pt;}
+</style>
+<style>
+table.cmp{font-size:8pt;}
+table.cmp thead th{padding:6px 7px;}
+table.cmp tbody td{padding:3.5px 7px;}
+table.cmp .stt{width:30px;text-align:right;color:var(--gray);}
+</style>
+</head><body>
+<div class="page">
+<div class="rh">
+  <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"/>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"/>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"/>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"/>
+</g></g></svg></div>
+  <div class="rh-meta"><b>BÁO CÁO TỔNG HỢP</b><i>CONSOLIDATED FINAL REPORT</i>
+    Mã văn bản: BCKS-DEGO-FINAL-2026.05.29<br>Phiên bản: FINAL v1.0</div>
+</div>
+<h1 class="doc-title">BÁO CÁO FINAL · BẢN QUYỀN PHẦN MỀM</h1>
+<p class="doc-subtitle">DEGO Holding · Đề xuất mua bản quyền đợt 1 (dựa trên báo giá PACISOFT 26/05/2026)</p>
+<table class="meta">
+  <tr><td class="k"><b>Tổ chức</b><i>Organization</i></td><td class="v">DEGO Holding</td>
+      <td class="k"><b>Ngày lập</b><i>Date created</i></td><td class="v">29 / 05 / 2026</td></tr>
+  <tr><td class="k"><b>Số đơn vị</b><i>No. of units</i></td><td class="v">14 đơn vị khảo sát</td>
+      <td class="k"><b>Tổng NS / KS</b><i>Total / Surveyed</i></td><td class="v">229 / 188 hoàn tất</td></tr>
+  <tr><td class="k"><b>CEO phê duyệt</b><i>CEO Approval</i></td><td class="v">Anh Trần Chí Dững</td>
+      <td class="k"><b>Người lập</b><i>Report Author</i></td><td class="v">DX Team · Anh Phạm Lê Triết Giang</td></tr>
+  <tr><td class="k"><b>Phạm vi</b><i>Scope</i></td><td class="v">Mua bản quyền OS/Office đợt 1</td>
+      <td class="k"><b>Mã văn bản</b><i>Doc. Code</i></td><td class="v">BCKS-DEGO-FINAL-2026.05.29</td></tr>
+</table>
+<div class="part-label">PHẦN&nbsp;I</div>
+<div class="section"><div class="num">I</div>
+  <div class="bar"><b>TỔNG QUAN TOÀN HỆ THỐNG</b><span>Holding-wide Overview</span></div></div>
+<p class="lead">Báo cáo tổng hợp nhu cầu bản quyền phần mềm toàn DEGO Holding, dựa trên dữ liệu khảo sát
+<strong>(Dego DX Team) Báo cáo Khảo sát sử dụng phần mềm</strong> và báo giá chính thức của
+<strong>PACISOFT (26/05/2026)</strong>. Tổng số nhân sự đã khảo sát hoàn tất: <strong>188 người</strong>
+(theo cột Trạng thái "Hoàn tất"). Chi phí được tách thành 2 đợt: <strong>Đợt 1</strong> – mua bản quyền
+OS/Office một lần (trình CEO phê duyệt ngay); <strong>Đợt 2</strong> – phần mềm thuê bao hàng năm (sẽ
+trình từng phòng ban phê duyệt).</p>
+<div class="callout warn">
+  <span class="ct">NGÂN SÁCH CẦN CEO PHÊ DUYỆT — ĐỢT 1 (chi phí 1 lần, mua bản quyền): 176.300.000 đ</span>
+  Gồm <strong>171.500.000 đ</strong> (35 license Windows 11 Pro) + <strong>4.800.000 đ</strong>
+  (01 license Office Home &amp; Business 2024) — đã gồm VAT, theo báo giá PACISOFT.
+</div>
+<div class="callout info">
+  <span class="ct">Chi phí phần mềm hàng năm — ĐỢT 2 (trình các phòng ban phê duyệt sau): 100.056.000 đ / năm</span>
+  Là chi phí thuê bao phần mềm (Adobe, AMIS, Capcut…).
+  Sẽ được DX Team gửi đề xuất chi tiết về từng phòng ban phê duyệt trong đợt 2.
+</div>
+<div class="callout ok">
+  <span class="ct">Tổng nhu cầu license toàn hệ thống (cột R): 276.356.000 đ</span>
+  Bằng 176.300.000 đ (1 lần, đợt 1) + 100.056.000 đ (hàng năm, đợt 2). Báo cáo này tập trung trình duyệt phần đợt 1.
+</div>
+<div class="rf">
+  <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+    <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 1</span></div>
+  <div class="rf-sub">Báo cáo nội bộ DX Team · Tổng hợp 14 đơn vị khảo sát · Trình CEO phê duyệt mua bản quyền đợt 1</div>
+</div>
+</div>
+<div class="page">
+<div class="rh">
+  <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"/>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"/>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"/>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"/>
+</g></g></svg></div>
+  <div class="rh-meta"><b>BÁO CÁO TỔNG HỢP</b><i>CONSOLIDATED FINAL REPORT</i>
+    Mã văn bản: BCKS-DEGO-FINAL-2026.05.29<br>Phiên bản: FINAL v1.0</div>
+</div>
+<div class="part-label">PHẦN&nbsp;II</div>
+<div class="section"><div class="num">II</div>
+  <div class="bar"><b>BẢNG TỔNG HỢP CHI PHÍ THEO LOẠI LICENSE</b><span>Cost Summary by License — PACISOFT</span></div></div>
+<p>Bảng tổng hợp chi phí mua bản quyền 1 lần, theo báo giá PACISOFT (Số PO chờ cấp, hiệu lực 07 ngày kể từ 26/05/2026).</p>
+<table class="data">
+  <thead><tr><th>Loại license</th><th class="num">Số lượng</th><th class="num">Đơn giá (VAT)</th>
+    <th class="num">Thành tiền</th><th class="num">Loại chi phí</th></tr></thead>
+  <tbody>
+    <tr><td><b>Windows 11 Pro 64-bit</b> (FQC-10572, PK LicOnline DwnLd NR)</td>
+        <td class="num">35</td><td class="num">4.900.000 đ</td><td class="num">171.500.000 đ</td><td class="num">1 lần</td></tr>
+    <tr><td><b>Office Home &amp; Business 2024</b> (All Lng APAC EM Retail)</td>
+        <td class="num">1</td><td class="num">4.800.000 đ</td><td class="num">4.800.000 đ</td><td class="num">1 lần</td></tr>
+    <tr class="total"><td>TỔNG CHI PHÍ 1 LẦN (ĐỢT 1)</td><td class="num">36</td><td class="num">—</td>
+        <td class="num"><span class="money">176.300.000 đ</span></td><td class="num">1 lần</td></tr>
+    <tr><td>Phần mềm thuê bao hàng năm (đợt 2 — trình phòng ban)</td><td class="num">—</td><td class="num">—</td>
+        <td class="num">100.056.000 đ</td><td class="num">hàng năm</td></tr>
+    <tr class="total"><td>Σ TỔNG NHU CẦU (cột R)</td><td class="num">—</td><td class="num">—</td>
+        <td class="num"><span class="money">276.356.000 đ</span></td><td class="num">—</td></tr>
+  </tbody>
+</table>
+<h2 class="h3">Mô tả chi tiết 2 loại key bản quyền</h2>
+<div class="callout info">
+  <span class="ct">① Windows 11 Pro (FQC-10572) — 35 license</span>
+  Key được PACISOFT gửi qua email dưới dạng <strong>bảng danh sách</strong>. Cho phép
+  <strong>xóa key trên máy cũ và chuyển key sang máy mới sau 90 ngày</strong> sử dụng,
+  <strong>không giới hạn số lần thay đổi</strong>. Cài đặt trực tiếp (kích hoạt) trên bản Windows
+  <strong>đã cài sẵn</strong> trên PC — không cần cài lại hệ điều hành. Thời hạn bản quyền: <strong>vĩnh viễn</strong>.
+</div>
+<div class="callout warn">
+  <span class="ct">② Office Home &amp; Business 2024 — 01 license</span>
+  Cấp cho email <strong>hr@degoholding.com</strong> (Phòng Nhân sự). Key
+  <strong>gắn theo tài khoản Gmail</strong> của email này.
+</div>
+<div class="rf">
+  <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+    <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 2</span></div>
+  <div class="rf-sub">Báo cáo nội bộ DX Team · Tổng hợp 14 đơn vị khảo sát · Trình CEO phê duyệt mua bản quyền đợt 1</div>
+</div>
+</div>
+<div class="page">
+<div class="rh">
+  <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"/>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"/>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"/>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"/>
+</g></g></svg></div>
+  <div class="rh-meta"><b>BÁO CÁO TỔNG HỢP</b><i>CONSOLIDATED FINAL REPORT</i>
+    Mã văn bản: BCKS-DEGO-FINAL-2026.05.29<br>Phiên bản: FINAL v1.0</div>
+</div>
+<div class="part-label">PHẦN&nbsp;III</div>
+<div class="section"><div class="num">III</div>
+  <div class="bar"><b>DANH SÁCH PC CẦN MUA THEO CÔNG TY</b><span>PC Purchase Allocation by Entity</span></div></div>
+<p>Đối chiếu danh sách CCDC PC đang khấu hao theo từng pháp nhân (file <strong>Tổng hợp CCDC PC/Laptop 2025</strong>)
+để xác định số PC cần cấp bản quyền. Số PC khấu hao theo công ty: ABA 10 · iCare 10 · DEGO 9 · IDA 8.
+Đề xuất mua <strong>35 Windows + 01 Office</strong>, phân bổ đúng tài sản từng công ty.</p>
+<table class="data">
+  <thead><tr><th>Pháp nhân (sở hữu thiết bị)</th><th class="num">Windows</th><th class="num">Office</th>
+    <th class="num">Thành tiền (VAT)</th><th>Ghi chú</th></tr></thead>
+  <tbody>
+    <tr class="top"><td><b>ABA Chemical</b></td><td class="num"><b>10</b></td><td class="num">—</td>
+        <td class="num"><b>49.000.000 đ</b></td><td>Tạm ngưng — mua sau khi hoàn tất thủ tục bán thiết bị từ ABA Chemical qua công ty thành viên khác</td></tr>
+    <tr><td>iCare</td><td class="num">10</td><td class="num">—</td><td class="num">49.000.000 đ</td><td><span class="dash">—</span></td></tr>
+    <tr><td>Dego Holding</td><td class="num">9</td><td class="num">1</td><td class="num">48.900.000 đ</td><td>Bao gồm 01 Office cho Phòng Nhân sự (hr@degoholding.com)</td></tr>
+    <tr><td>IDA Global</td><td class="num">6</td><td class="num">—</td><td class="num">29.400.000 đ</td><td>Tổng 8 PC (6 Windows, 2 Linux)</td></tr>
+    <tr class="total"><td>Σ TỔNG</td><td class="num">35</td><td class="num">1</td>
+        <td class="num"><span class="money">176.300.000 đ</span></td><td>Đã gồm VAT</td></tr>
+  </tbody>
+</table>
+<div class="callout ok">
+  <span class="ct">Đơn giá áp dụng</span>
+  4.900.000 đ / license Windows 11 Pro · 4.800.000 đ / license Office (đã gồm VAT).
+  Phân bổ đã được chốt với các Trưởng phòng ban, gán đúng tài sản từng công ty, đảm bảo hợp lý chi phí.
+</div>
+<p style="font-size:9pt;color:var(--gray);"><strong style="color:var(--navy);">Lưu ý ABA Chemical:</strong>
+  10 license (49.000.000 đ) tạm chưa đặt mua trong đợt này, sẽ thực hiện sau khi hoàn tất thủ tục
+  bán/chuyển thiết bị từ ABA Chemical sang công ty thành viên khác. Phần đặt mua thực tế ngay đợt 1 là
+  <strong>25 Windows + 01 Office = 127.300.000 đ</strong>.</p>
+<div class="rf">
+  <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+    <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 3</span></div>
+  <div class="rf-sub">Báo cáo nội bộ DX Team · Tổng hợp 14 đơn vị khảo sát · Trình CEO phê duyệt mua bản quyền đợt 1</div>
+</div>
+</div>
+<div class="page">
+<div class="rh">
+  <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"/>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"/>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"/>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"/>
+</g></g></svg></div>
+  <div class="rh-meta"><b>BÁO CÁO TỔNG HỢP</b><i>CONSOLIDATED FINAL REPORT</i>
+    Mã văn bản: BCKS-DEGO-FINAL-2026.05.29<br>Phiên bản: FINAL v1.0</div>
+</div>
+<div class="part-label">PHẦN&nbsp;IV</div>
+<div class="section"><div class="num">IV</div>
+  <div class="bar"><b>CHI PHÍ PHẦN MỀM HÀNG NĂM (ĐỢT 2)</b><span>Annual Subscription — Phase 2</span></div></div>
+<p>Chi phí phần mềm thuê bao hàng năm sẽ được DX Team gửi đề xuất chi tiết về từng phòng ban
+phê duyệt trong đợt 2. Tổng hợp theo đơn vị:</p>
+<table class="data">
+  <thead><tr><th>Đơn vị</th><th class="num">Chi phí phần mềm / năm</th><th>Ghi chú</th></tr></thead>
+  <tbody>
+    <tr class="top"><td><b>iCare</b></td><td class="num"><b>64.992.000 đ</b></td><td>Phần mềm chuyên dụng kinh doanh / marketing</td></tr>
+    <tr class="top"><td><b>Thiết kế (ABA)</b></td><td class="num"><b>32.400.000 đ</b></td><td>Adobe, CorelDraw, Capcut…</td></tr>
+    <tr><td>IDA Global</td><td class="num">2.664.000 đ</td><td>Capcut</td></tr>
+    <tr class="total"><td>Σ TỔNG / NĂM</td><td class="num"><span class="money">100.056.000 đ</span></td><td><span class="dash">—</span></td></tr>
+  </tbody>
+</table>
+<div class="callout info">
+  <span class="ct">Hướng xử lý đợt 2</span>
+  Phần thuê bao hàng năm <strong>không nằm trong phạm vi phê duyệt của báo cáo này</strong>.
+  DX Team sẽ tách đề xuất riêng cho từng phòng ban (kèm danh sách user) để Trưởng BP đối chiếu và phê duyệt.
+</div>
+<div class="part-label">PHẦN&nbsp;V</div>
+<div class="section"><div class="num">V</div>
+  <div class="bar"><b>KẾT LUẬN, LỊCH TRIỂN KHAI & PHÊ DUYỆT</b><span>Conclusion, Timeline & Approval</span></div></div>
+<p>Sau khi CEO phê duyệt nguyên tắc ngân sách đợt 1 (176.300.000 đ), DX Team triển khai theo lịch
+3 tuần W22 → W24 (file Kế hoạch Rà soát Bản quyền Đợt 1, sheet "03_Lịch làm việc").</p>
+<div class="rf">
+  <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+    <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 4</span></div>
+  <div class="rf-sub">Báo cáo nội bộ DX Team · Tổng hợp 14 đơn vị khảo sát · Trình CEO phê duyệt mua bản quyền đợt 1</div>
+</div>
+</div>
+<div class="page">
+<div class="rh">
+  <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"/>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"/>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"/>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"/>
+</g></g></svg></div>
+  <div class="rh-meta"><b>BÁO CÁO TỔNG HỢP</b><i>CONSOLIDATED FINAL REPORT</i>
+    Mã văn bản: BCKS-DEGO-FINAL-2026.05.29<br>Phiên bản: FINAL v1.0</div>
+</div>
+<h2 class="h3">Lịch triển khai 3 tuần (W22 → W24 · 25/05 → 14/06/2026)</h2>
+<table class="data">
+  <thead><tr><th>Tuần</th><th>Ngày</th><th>Nội dung chính</th><th>PIC</th></tr></thead>
+  <tbody>
+    <tr><td>W22<br><small>Chuẩn bị</small></td><td class="num">28/05</td><td>Trình đề xuất mua bản quyền OS → DX tiến hành đặt mua</td><td>DX Team</td></tr>
+    <tr><td>W22</td><td class="num">29–30/05</td><td>Thông báo &amp; hỗ trợ nhân sự backup dữ liệu trước khi cài đặt</td><td>DX Team</td></tr>
+    <tr><td>W23<br><small>Triển khai</small></td><td class="num">01–02/06</td><td>Kế toán (22 PC, 3 đợt) + Sản xuất–Thu mua (đợt 1)</td><td>DX Team</td></tr>
+    <tr><td>W23</td><td class="num">03/06</td><td>Sản xuất–Thu mua (laptop) · Dego Lab · Hành chính · KSKH</td><td>DX Team</td></tr>
+    <tr><td>W23</td><td class="num">04/06</td><td>ABA–Thiết kế–Xây dựng (8 máy) · IDA văn phòng (7 máy)</td><td>DX Team</td></tr>
+    <tr><td>W23</td><td class="num">05–06/06</td><td>iCare (12 máy) · Bamboo · Nhà máy Dego · VP SG · Nhân sự</td><td>DX Team</td></tr>
+    <tr><td>W24<br><small>Hậu kiểm</small></td><td class="num">07–14/06</td><td>Hậu kiểm tổng · xử lý máy sót · cập nhật Sổ Quản lý License · báo cáo BGĐ · buffer dự phòng</td><td>DX Team</td></tr>
+  </tbody>
+</table>
+<div class="callout ok">
+  <span class="ct">Nguyên tắc</span>
+  "Tuân thủ pháp luật là tiền đề – Tối ưu chi phí là mục tiêu". Toàn bộ license mua qua nguồn hợp pháp
+  (PACISOFT), xuất hoá đơn VAT VN đầy đủ. Mỗi máy CT trung bình 60–90 phút (gỡ + khôi phục + cài lại).
+</div>
+<div class="signs">
+  <div class="col"><div class="role">CEO · GIÁM ĐỐC<i>Chief Executive Officer</i></div>
+    <div class="name">Anh Trần Chí Dững<i>Giám đốc – DEGO Holding</i></div></div>
+  <div class="col"><div class="role">NGƯỜI LẬP<i>Report Author</i></div>
+    <div class="name">Anh Phạm Lê Triết Giang<i>DX Team · DEGO Holding</i></div></div>
+</div>
+<div class="rf">
+  <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+    <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 5</span></div>
+  <div class="rf-sub">Báo cáo nội bộ DX Team · Tổng hợp 14 đơn vị khảo sát · Trình CEO phê duyệt mua bản quyền đợt 1</div>
+</div>
+</div>
+<div class="page"><div class="rh"><div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"/>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"/>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"/>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"/>
+</g></g></svg></div><div class="rh-meta"><b>BÁO CÁO TỔNG HỢP</b><i>CONSOLIDATED FINAL REPORT</i>Mã văn bản: BCKS-DEGO-FINAL-2026.05.29<br>Phiên bản: FINAL v1.0</div></div>
+<div class="part-label">PHỤ LỤC&nbsp;A</div><div class="section"><div class="num">A</div><div class="bar"><b>DANH SÁCH NHÂN SỰ CẦN MUA WINDOWS &amp; OFFICE</b><span>Windows / Office License — Per User</span></div></div>
+<p style="font-size:9pt;">Danh sách 36 nhân sự cần cấp license mua 1 lần (35 Windows + 01 Office), phân theo pháp nhân sở hữu thiết bị.</p>
+<table class="data cmp"><thead><tr><th class="stt">#</th><th>Phòng ban</th><th>Họ và tên</th><th class="num">Chi phí Win</th><th class="num">Chi phí Office</th><th>Pháp nhân sở hữu</th></tr></thead><tbody><tr><td class="stt">1</td><td>Icare</td><td>Trần Lê Tường Vy</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>iCare</td></tr><tr><td class="stt">2</td><td>Icare</td><td>Lê Tuấn Kiệt</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>iCare</td></tr><tr><td class="stt">3</td><td>Icare</td><td>Huỳnh Quốc Bảo</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>iCare</td></tr><tr><td class="stt">4</td><td>Icare</td><td>Danh Hoàng Nguyên</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>iCare</td></tr><tr><td class="stt">5</td><td>Icare</td><td>Âu Kim Thương</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>iCare</td></tr><tr><td class="stt">6</td><td>IDA Global</td><td>Huỳnh Lâm Kim Loan</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>IDA</td></tr><tr><td class="stt">7</td><td>IDA Global</td><td>Lê Thị Ngọc Hân</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>IDA</td></tr><tr><td class="stt">8</td><td>IDA Global</td><td>Huỳnh Thị Thanh Nguyên</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>IDA</td></tr><tr><td class="stt">9</td><td>IDA Global</td><td>Nguyễn Thị Anh Thư</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>IDA</td></tr><tr><td class="stt">10</td><td>Thiết kế</td><td>Lâm Hữu Thịnh</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>ABA Chemical</td></tr><tr><td class="stt">11</td><td>Lập trình & IT nội bộ</td><td>Phạm Lê Triết Giang</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>ABA Chemical</td></tr><tr><td class="stt">12</td><td>Kế toán</td><td>Đỗ Quốc Toàn</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>ABA Chemical</td></tr><tr><td class="stt">13</td><td>Kế toán</td><td>Vương Mỹ Ngân</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>ABA Chemical</td></tr><tr><td class="stt">14</td><td>Kế toán</td><td>Nguyễn Hoàng Dủ</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>ABA Chemical</td></tr><tr><td class="stt">15</td><td>Kế toán</td><td>Lý Minh Nguyệt</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>ABA Chemical</td></tr><tr><td class="stt">16</td><td>Kế toán</td><td>Nguyễn Thị Kiều Trang</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>ABA Chemical</td></tr><tr><td class="stt">17</td><td>Kế toán</td><td>Nguyễn Thị Yến Giang</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>ABA Chemical</td></tr><tr><td class="stt">18</td><td>Kế toán</td><td>Võ Thị Kiều Loan</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>ABA Chemical</td></tr><tr><td class="stt">19</td><td>Kế toán</td><td>Nguyễn Thị Ngọc Thảo</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>ABA Chemical</td></tr><tr><td class="stt">20</td><td>Kế toán</td><td>Nguyễn Minh Toàn (PC Thuế 1)</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>iCare</td></tr><tr><td class="stt">21</td><td>Kế toán</td><td>Nguyễn Minh Toàn (PC Thuế 2)</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>iCare</td></tr><tr><td class="stt">22</td><td>Kế toán</td><td>Võ Trình Kim Vy</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>iCare</td></tr><tr><td class="stt">23</td><td>Kế toán</td><td>Đặng Bá Tiếp</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>iCare</td></tr><tr><td class="stt">24</td><td>Kế toán</td><td>Trần Ngọc Thảo Ly</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>iCare</td></tr></tbody></table>
+<div class="rf"><div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span><span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 6</span></div><div class="rf-sub">Báo cáo nội bộ DX Team · Tổng hợp 14 đơn vị khảo sát · Trình CEO phê duyệt mua bản quyền đợt 1</div></div></div><div class="page"><div class="rh"><div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"/>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"/>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"/>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"/>
+</g></g></svg></div><div class="rh-meta"><b>BÁO CÁO TỔNG HỢP</b><i>CONSOLIDATED FINAL REPORT</i>Mã văn bản: BCKS-DEGO-FINAL-2026.05.29<br>Phiên bản: FINAL v1.0</div></div>
+<div class="part-label">PHỤ LỤC&nbsp;A (tiếp theo)</div><div class="section"><div class="num">A</div><div class="bar"><b>DANH SÁCH NHÂN SỰ CẦN MUA WINDOWS &amp; OFFICE</b><span>Windows / Office License — Per User</span></div></div>
+
+<table class="data cmp"><thead><tr><th class="stt">#</th><th>Phòng ban</th><th>Họ và tên</th><th class="num">Chi phí Win</th><th class="num">Chi phí Office</th><th>Pháp nhân sở hữu</th></tr></thead><tbody><tr><td class="stt">25</td><td>Kế toán</td><td>Phạm Huỳnh Bảo Trang</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>IDA</td></tr><tr><td class="stt">26</td><td>Kế toán</td><td>Hồ Ngọc Quế Anh</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>IDA</td></tr><tr><td class="stt">27</td><td>Kế toán</td><td>Nguyễn Thị Ngọc Hân</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>Dego Holding</td></tr><tr><td class="stt">28</td><td>Kế toán</td><td>Huỳnh Hoàng Phúc</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>Dego Holding</td></tr><tr><td class="stt">29</td><td>Kế toán</td><td>La Tường Vi</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>Dego Holding</td></tr><tr><td class="stt">30</td><td>Kế toán</td><td>Võ Thị Kim Hoa</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>Dego Holding</td></tr><tr><td class="stt">31</td><td>Kế toán</td><td>Phạm Duy Tính</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>Dego Holding</td></tr><tr><td class="stt">32</td><td>Kế toán</td><td>Nguyễn Thị Thu Thủy</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>Dego Holding</td></tr><tr><td class="stt">33</td><td>Kế toán</td><td>Lê Mỹ Duyên</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>Dego Holding</td></tr><tr><td class="stt">34</td><td>Kế toán</td><td>Danh Nhật Hào</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>Dego Holding</td></tr><tr><td class="stt">35</td><td>Kế toán</td><td>Phạm Hửu My</td><td class="num">4.900.000 đ</td><td class="num">—</td><td>Dego Holding</td></tr><tr><td class="stt">36</td><td>Nhân sự</td><td>Trịnh Thùy Giang</td><td class="num">—</td><td class="num">4.800.000 đ</td><td>Dego Holding</td></tr><tr class="total"><td colspan="3">TỔNG CỘNG (36 người)</td><td class="num"><span class="money">171.500.000 đ</span></td><td class="num"><span class="money">4.800.000 đ</span></td><td class="num"><span class="money">176.300.000 đ</span></td></tr></tbody></table>
+<div class="rf"><div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span><span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 7</span></div><div class="rf-sub">Báo cáo nội bộ DX Team · Tổng hợp 14 đơn vị khảo sát · Trình CEO phê duyệt mua bản quyền đợt 1</div></div></div><div class="page"><div class="rh"><div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"/>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"/>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"/>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"/>
+</g></g></svg></div><div class="rh-meta"><b>BÁO CÁO TỔNG HỢP</b><i>CONSOLIDATED FINAL REPORT</i>Mã văn bản: BCKS-DEGO-FINAL-2026.05.29<br>Phiên bản: FINAL v1.0</div></div>
+<div class="part-label">PHỤ LỤC&nbsp;B</div><div class="section"><div class="num">B</div><div class="bar"><b>DANH SÁCH NHÂN SỰ CẦN MUA PHẦN MỀM HÀNG NĂM</b><span>Annual Software — Per User</span></div></div>
+<p style="font-size:9pt;">Danh sách 6 nhân sự có nhu cầu phần mềm thuê bao hàng năm (đợt 2 — trình phòng ban phê duyệt).</p>
+<table class="data cmp"><thead><tr><th class="stt">#</th><th>Họ và tên</th><th>Phòng ban</th><th class="num">Chi phí / năm</th><th>Phần mềm cần mua</th></tr></thead><tbody><tr><td class="stt">1</td><td>Trần Lê Tường Vy</td><td>Icare</td><td class="num">22.800.000 đ</td><td>Adobe Photoshop, Adobe Illustrator</td></tr><tr><td class="stt">2</td><td>Lê Tuấn Kiệt</td><td>Icare</td><td class="num">14.064.000 đ</td><td>Adobe Premiere, Capcut</td></tr><tr><td class="stt">3</td><td>Huỳnh Quốc Bảo</td><td>Icare</td><td class="num">14.064.000 đ</td><td>Adobe Premiere, Capcut</td></tr><tr><td class="stt">4</td><td>Âu Kim Thương</td><td>Icare</td><td class="num">14.064.000 đ</td><td>Adobe Photoshop, Capcut</td></tr><tr><td class="stt">5</td><td>Lương Thị Như Ý</td><td>IDA Global</td><td class="num">2.664.000 đ</td><td>Capcut, Canva</td></tr><tr><td class="stt">6</td><td>Lâm Hữu Thịnh</td><td>Thiết kế</td><td class="num">32.400.000 đ</td><td>MISA, Adobe Photoshop, Adobe Illustrator, CorelDraw</td></tr><tr class="total"><td colspan="3">TỔNG CỘNG (6 người)</td><td class="num"><span class="money">100.056.000 đ</span></td><td>—</td></tr></tbody></table>
+<div class="rf"><div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span><span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 8</span></div><div class="rf-sub">Báo cáo nội bộ DX Team · Tổng hợp 14 đơn vị khảo sát · Trình CEO phê duyệt mua bản quyền đợt 1</div></div></div><div class="page"><div class="rh"><div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"/>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"/>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"/>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"/>
+</g></g></svg></div><div class="rh-meta"><b>BÁO CÁO TỔNG HỢP</b><i>CONSOLIDATED FINAL REPORT</i>Mã văn bản: BCKS-DEGO-FINAL-2026.05.29<br>Phiên bản: FINAL v1.0</div></div>
+<div class="part-label">PHỤ LỤC&nbsp;C</div><div class="section"><div class="num">C</div><div class="bar"><b>DANH SÁCH PHÂN BỔ TÀI SẢN — CHỈ PC</b><span>PC Asset Allocation (CCDC)</span></div></div>
+<p style="font-size:9pt;">Danh sách 37 PC (CCDC) đang khấu hao, lọc theo phân loại "PC". Theo công ty: ABA: 10 · DEGO: 9 · ICARE: 10 · IDA: 8.</p>
+<table class="data cmp"><thead><tr><th class="stt">#</th><th>Công ty</th><th>Mã CCDC</th><th>Tên tài sản / dụng cụ (PC)</th></tr></thead><tbody><tr><td class="stt">1</td><td>ABA</td><td>CCDC001</td><td>Máy tính bộ HP EliteDesk 800 G1, Ram 4G DDR3, Ổ cứng máy tính SSD…</td></tr><tr><td class="stt">2</td><td>ABA</td><td>CCDC003</td><td>Thùng máy tính HP, Chip vi, Ổ cứng Kingston, Ram 4G DDR3, Ổ cứng H…</td></tr><tr><td class="stt">3</td><td>ABA</td><td>CCDC004</td><td>Bộ máy tính DELL IN-5310 i3-1125 G4/8G/256G SSD/W10/13.3</td></tr><tr><td class="stt">4</td><td>ABA</td><td>CCDC005</td><td>Bộ máy tính DELL IN-5310 i3-1125G4/8G/256G SSD/W10/13.3"</td></tr><tr><td class="stt">5</td><td>ABA</td><td>CCDC015</td><td>Máy tính bộ Lenovo M83 SFF, Ram 4G DDR3, Ổ cứng Kingston A400, HDD…</td></tr><tr><td class="stt">6</td><td>ABA</td><td>CCDC019</td><td>Bộ máy tính: Màn hình máy tính; Chíp xử lý INTEL CORE I3+Quạt; Bo…</td></tr><tr><td class="stt">7</td><td>ABA</td><td>CCDC027</td><td>Bộ máy tính: CPU Intel core i3-10105; Mainboard MSI H510M plus; RA…</td></tr><tr><td class="stt">8</td><td>ABA</td><td>CCDC029</td><td>Bộ máy vi tính: Mainboard MSI H6; RAM Gskill Ripjaws V DDR4 16GB 3…</td></tr><tr><td class="stt">9</td><td>ABA</td><td>CCDC030</td><td>Bộ máy tính: Chíp vi xử lý INTEL CORE I3 10105-3.70 GHZ+Quạt;Bo mạ…</td></tr><tr><td class="stt">10</td><td>ABA</td><td>CCDC044</td><td>Bộ máy tính: Bo mạch chủ MSI PRO H510M-B; Màn hình VSP 27'' IP2706…</td></tr><tr><td class="stt">11</td><td>DEGO</td><td>CCDC002</td><td>Bộ thiết bị máy tính (Vỏ case, Nguồn, Mạch chính, Chíp vi xử lý In…</td></tr><tr><td class="stt">12</td><td>DEGO</td><td>CCDC021</td><td>Bộ thiết bị máy tính (Bàn phím, chuột, vỏ máy tính, nguồn máy tính…</td></tr><tr><td class="stt">13</td><td>DEGO</td><td>CCDC022</td><td>Thiết bị máy tính (Ổ cứng, Vỏ case, Nguồn máy tính, Mạch chính vi…</td></tr><tr><td class="stt">14</td><td>DEGO</td><td>CCDC037</td><td>Bộ máy tính (Màn hình máy tính AOC 27B1H27''FHD, Tấm mạch in đã lắ…</td></tr><tr><td class="stt">15</td><td>DEGO</td><td>CCDC064</td><td>Bộ máy vi tính PC cấu hình cao (Máy chủ)</td></tr><tr><td class="stt">16</td><td>DEGO</td><td>CCDC172</td><td>Bộ vi tính ASUS PRIME B760M - K D4</td></tr><tr><td class="stt">17</td><td>DEGO</td><td>CCDC174</td><td>Bô PC MSI PRO H610M-E DDR4</td></tr><tr><td class="stt">18</td><td>DEGO</td><td>CCDC001</td><td>Bộ máy tính để bàn (Bảng mạch chính Asus Prime H510M-K, CPU Intel…</td></tr><tr><td class="stt">19</td><td>DEGO</td><td>CCDC050</td><td>Bộ máy tính: Màn hình vi tính hiệu DELL-LCD-U2422H-23.8"WHD-3Y, Bo…</td></tr><tr><td class="stt">20</td><td>ICARE</td><td>CCDC0002</td><td>Máy tính bộ Dell Optiplex 9010/7010/</td></tr><tr><td class="stt">21</td><td>ICARE</td><td>CCDC0004</td><td>Máy tính bộ HP Compaq Pro 6300</td></tr><tr><td class="stt">22</td><td>ICARE</td><td>CCDC0015</td><td>Chíp vi xử lý INTEL, Bo mạch máy chủ MSI, SSD TeamGroup, RAM GEIL…</td></tr><tr><td class="stt">23</td><td>ICARE</td><td>CCDC0021</td><td>Bộ máy tính: Chíp INTEL CORE I3; Bo mạch chủ SMI; Ổ đĩa cứng SSD;…</td></tr><tr><td class="stt">24</td><td>ICARE</td><td>CCDC0025</td><td>Bộ máy tính: CPU i5 12400 18MB Cache LGA 1700 Box Chính Hãng; Mạch…</td></tr></tbody></table>
+<div class="rf"><div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span><span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 9</span></div><div class="rf-sub">Báo cáo nội bộ DX Team · Tổng hợp 14 đơn vị khảo sát · Trình CEO phê duyệt mua bản quyền đợt 1</div></div></div><div class="page"><div class="rh"><div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"/>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"/>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"/>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"/>
+</g></g></svg></div><div class="rh-meta"><b>BÁO CÁO TỔNG HỢP</b><i>CONSOLIDATED FINAL REPORT</i>Mã văn bản: BCKS-DEGO-FINAL-2026.05.29<br>Phiên bản: FINAL v1.0</div></div>
+<div class="part-label">PHỤ LỤC&nbsp;C (tiếp theo)</div><div class="section"><div class="num">C</div><div class="bar"><b>DANH SÁCH PHÂN BỔ TÀI SẢN — CHỈ PC</b><span>PC Asset Allocation (CCDC)</span></div></div>
+
+<table class="data cmp"><thead><tr><th class="stt">#</th><th>Công ty</th><th>Mã CCDC</th><th>Tên tài sản / dụng cụ (PC)</th></tr></thead><tbody><tr><td class="stt">25</td><td>ICARE</td><td>CCDC0028</td><td>Chíp vi xử lý INTEL CORE I3 10105 - 3.70 GHZ + Quạt; Bo mạch chủ m…</td></tr><tr><td class="stt">26</td><td>ICARE</td><td>CCDC0032</td><td>Bộ máy vi tính hiệu ASUS</td></tr><tr><td class="stt">27</td><td>ICARE</td><td>CCDC0071</td><td>Máy vi tính hiệu Asus loại PRIME B760M-K D4, Chip vi xử lý INTEL C…</td></tr><tr><td class="stt">28</td><td>ICARE</td><td>CCDC0072</td><td>Máy vi tính hiệu Asus loại PRIME B760M-K D4, Chip vi xử lý CORE I5</td></tr><tr><td class="stt">29</td><td>ICARE</td><td>CCDC0094</td><td>Bộ máy tính ASUS PRIME B760M - K D4</td></tr><tr><td class="stt">30</td><td>IDA</td><td>CCDC050</td><td>Bộ máy vi tính</td></tr><tr><td class="stt">31</td><td>IDA</td><td>CCDC053</td><td>Bộ máy tính: Màn hình LCD Asus 23.8" VY249HF-R (1920 x 1080/ IPS/…</td></tr><tr><td class="stt">32</td><td>IDA</td><td>CCDC002</td><td>Máy vi tính 1</td></tr><tr><td class="stt">33</td><td>IDA</td><td>CCDC003</td><td>Máy vi tính 2</td></tr><tr><td class="stt">34</td><td>IDA</td><td>CCDC006</td><td>Máy tính trạm HP</td></tr><tr><td class="stt">35</td><td>IDA</td><td>CCDC012</td><td>Máy tính để bàn Asus D700TA i5-10400/8G/512GBSSD/Win 10 Home - 510…</td></tr><tr><td class="stt">36</td><td>IDA</td><td>CCDC023</td><td>Bộ máy tính: Chíp vi xử lý INTEL CORE I5-12400F - 2.50GHZ + Quạt;…</td></tr><tr><td class="stt">37</td><td>IDA</td><td>CCDC035</td><td>Bộ máy vi tính: CPU i5 12400 18MB Cache LGA 1700 Box Chính Hãng, B…</td></tr><tr class="total"><td></td><td>Σ TỔNG PC</td><td class="num">37 máy</td><td>ABA: 10 · DEGO: 9 · ICARE: 10 · IDA: 8</td></tr></tbody></table>
+<div class="rf"><div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span><span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 10</span></div><div class="rf-sub">Báo cáo nội bộ DX Team · Tổng hợp 14 đơn vị khảo sát · Trình CEO phê duyệt mua bản quyền đợt 1</div></div></div><div class="page"><div class="rh"><div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"/>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"/>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"/>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"/>
+</g></g></svg></div><div class="rh-meta"><b>BÁO CÁO TỔNG HỢP</b><i>CONSOLIDATED FINAL REPORT</i>Mã văn bản: BCKS-DEGO-FINAL-2026.05.29<br>Phiên bản: FINAL v1.0</div></div>
+<div class="part-label">PHỤ LỤC&nbsp;D</div>
+<div class="section"><div class="num">D</div><div class="bar"><b>CÁC MẪU PHIẾU ĐỀ XUẤT &amp; ĐỀ NGHỊ THANH TOÁN</b><span>Purchase Request &amp; Payment Forms</span></div></div>
+<p>Các mẫu phiếu đính kèm theo thứ tự, phục vụ đặt mua bản quyền đợt 1 cho 3 pháp nhân thực hiện ngay
+(iCare · IDA Global · Dego Holding). Tổng đặt mua: <strong>25 Windows + 01 Office = 127.300.000 đ</strong>
+(ABA Chemical tạm ngưng, xử lý sau). Báo giá gốc PACISOFT đính kèm cuối cùng.</p>
+<table class="data"><thead><tr><th class="num">#</th><th>Tên chứng từ</th><th>Pháp nhân</th><th class="num">Số tiền</th></tr></thead><tbody>
+<tr><td class="num">1</td><td>Phiếu đề xuất mua hàng — Chi phí Windows</td><td>iCare (10 Win)</td><td class="num">49.000.000 đ</td></tr>
+<tr><td class="num">2</td><td>Đề nghị thanh toán (DNTT) — Chi phí Windows</td><td>iCare (10 Win)</td><td class="num">49.000.000 đ</td></tr>
+<tr><td class="num">3</td><td>Phiếu đề xuất mua hàng — Chi phí Windows</td><td>IDA Global (6 Win)</td><td class="num">29.400.000 đ</td></tr>
+<tr><td class="num">4</td><td>Đề nghị thanh toán (DNTT) — Chi phí Windows</td><td>IDA Global (6 Win)</td><td class="num">29.400.000 đ</td></tr>
+<tr><td class="num">5</td><td>Phiếu đề xuất mua hàng — Chi phí Windows + Office</td><td>Dego Holding (9 Win + 1 Office)</td><td class="num">48.900.000 đ</td></tr>
+<tr><td class="num">6</td><td>Đề nghị thanh toán (DNTT) — Chi phí Windows + Office</td><td>Dego Holding (9 Win + 1 Office)</td><td class="num">48.900.000 đ</td></tr>
+<tr><td class="num">7</td><td>Báo giá gốc PACISOFT (26/05/2026)</td><td>Toàn holding</td><td class="num">176.300.000 đ</td></tr>
+<tr class="total"><td></td><td colspan="2">Σ TỔNG GIÁ TRỊ ĐẶT MUA ĐỢT 1 (3 pháp nhân)</td><td class="num"><span class="money">127.300.000 đ</span></td></tr>
+</tbody></table>
+<div class="callout info">
+  <span class="ct">Lưu ý</span>
+  Mỗi cặp phiếu gồm: (1) <strong>Phiếu đề xuất mua hàng hóa/dịch vụ</strong> và (2) <strong>Đề nghị thanh toán (DNTT)</strong>,
+  do Anh Phạm Lê Triết Giang lập, trình Giám đốc Anh Trần Chí Dững duyệt. Thanh toán cho CÔNG TY TNHH PACISOFT VIỆT NAM
+  qua ngân hàng ACB — CN Phú Nhuận, STK 200 629 049.
+</div>
+<div class="rf"><div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span><span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 11</span></div><div class="rf-sub">Báo cáo nội bộ DX Team · Tổng hợp 14 đơn vị khảo sát · Trình CEO phê duyệt mua bản quyền đợt 1</div></div></div>
+</body></html>

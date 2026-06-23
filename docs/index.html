@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEGO ERP System User Manual</title>
+  <meta name="description" content="Tài liệu hướng dẫn sử dụng chi tiết hệ thống DEGO ERP cho các bộ phận: Thu mua, Kế toán, Kho và Ban quản lý.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ambient Background for Glassmorphism -->
+  <div class="ambient-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Header Section -->
+  <header>
+    <div class="header-left">
+      <div class="logo-container">
+        <button id="sidebar-toggle" class="sidebar-toggle" title="Ẩn/Hiện Menu">☰</button>
+        <div class="logo-icon">D</div>
+        <span>DEGO Holding ERP Docs</span>
+      </div>
+      <span class="version-badge">v2.0 (Final)</span>
+    </div>
+    
+    <div class="header-right">
+      <!-- Fast search box -->
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Tìm kiếm tài liệu..." autocomplete="off">
+      </div>
+      
+      <!-- Editor mode toggle -->
+      <button class="edit-mode-btn" id="edit-mode-btn" title="Chế độ chỉnh sửa">
+        ✏️ Biên tập
+      </button>
+
+      <!-- Theme toggle -->
+      <button class="theme-toggle" id="theme-toggle" title="Chuyển đổi sáng/tối">
+        <!-- Sun/Moon icon updated by Javascript -->
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <div class="layout-container">
+    
+    <!-- Left Navigation Sidebar -->
+    <aside class="left-sidebar">
+      <div class="sidebar-resizer" id="sidebar-resizer"></div>
+      <nav id="sidebar-nav">
+        <!-- Rendered dynamically by app.js -->
+      </nav>
+    </aside>
+    
+    <!-- Center Main Article Content Panel -->
+    <main class="content-wrapper">
+      <article class="content-body" id="content-area">
+        <!-- Loaded dynamically by app.js -->
+      </article>
+
+      <!-- Hidden Editor Container -->
+      <div class="content-body" id="editor-container" style="display: none;">
+        <div class="category-indicator">Chế độ biên tập</div>
+        <h1 style="border-bottom: none; margin-bottom: 24px;">Chỉnh sửa nội dung tài liệu</h1>
+        
+        <div class="editor-field">
+          <label for="edit-category">Phân mục (Category)</label>
+          <input type="text" id="edit-category">
+        </div>
+        
+        <div class="editor-field">
+          <label for="edit-title">Tiêu đề (Title)</label>
+          <input type="text" id="edit-title">
+        </div>
+        
+        <div class="editor-field">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px;">
+            <label style="margin-bottom: 0;">Nội dung bài viết</label>
+            <div class="wp-tabs">
+              <button type="button" class="wp-tab active" id="wp-tab-visual">Trực quan</button>
+              <button type="button" class="wp-tab" id="wp-tab-code">Mã</button>
+            </div>
+          </div>
+          <div class="editor-textarea-wrapper">
+            <div id="toolbar-container"></div>
+            <div id="visual-editor-container"></div>
+            <textarea id="edit-content" style="display: none;"></textarea>
+          </div>
+        </div>
+        
+        <div class="editor-actions">
+          <button class="btn btn-save" id="btn-save">💾 Lưu và Đồng bộ</button>
+          <button class="btn btn-cancel" id="btn-cancel">Hủy</button>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Right Table of Contents (TOC) Sidebar -->
+    <aside class="right-sidebar">
+      <div class="toc-title">Mục lục bài viết</div>
+      <ul class="toc-list" id="toc-list">
+        <!-- Rendered dynamically by app.js -->
+      </ul>
+    </aside>
+
+  </div>
+
+  <!-- Documentation Database and Controller script modules -->
+  <script src="ckeditor.js"></script>
+  <script src="vi.js"></script>
+  <script src="data.js"></script>
+
+  <script src="app.js"></script>
+</body>
+</html>
