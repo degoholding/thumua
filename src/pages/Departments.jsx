@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Pencil, Trash2, Plus } from 'lucide-react';
 import { defaultDepartments, defaultNhanSu } from '../data';
 
 const Departments = () => {
@@ -121,9 +121,9 @@ const Departments = () => {
       title: 'Hành động', key: 'action', align: 'right',
       render: (_, record, index) => (
         <Space size="small">
-          <Button type="text" icon={<EditOutlined style={{ color: '#0275d8' }}/>} onClick={() => handleEdit(record, index)} />
+          <Button type="text" icon={<Pencil size={16} style={{ color: '#0275d8' }}/>} onClick={() => handleEdit(record, index)} />
           <Popconfirm title="Xóa Phòng ban này?" onConfirm={() => handleDelete(index)} okText="Đồng ý" cancelText="Hủy">
-            <Button type="text" danger icon={<DeleteOutlined />} />
+            <Button type="text" danger icon={<Trash2 size={16} />} />
           </Popconfirm>
         </Space>
       ),
@@ -140,10 +140,10 @@ const Departments = () => {
         <Space style={{ flexWrap: 'wrap' }}>
           {selectedRowKeys.length > 0 && (
             <Popconfirm title={`Xóa ${selectedRowKeys.length} phòng ban đã chọn?`} onConfirm={handleBatchDelete} okText="Đồng ý" cancelText="Hủy">
-              <Button danger icon={<DeleteOutlined />}>Xóa ({selectedRowKeys.length})</Button>
+              <Button danger icon={<Trash2 size={16} />}>Xóa ({selectedRowKeys.length})</Button>
             </Popconfirm>
           )}
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+          <Button type="primary" icon={<Plus size={16} />} onClick={handleAdd}>
             Thêm Phòng ban
           </Button>
         </Space>

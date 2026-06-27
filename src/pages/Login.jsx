@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Typography, Button, Space, Divider, Form, Input, message } from 'antd';
-import { UserOutlined, SafetyCertificateOutlined, ShoppingCartOutlined, CarOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { User, ShieldCheck, ShoppingCart, Car, Lock, Mail } from 'lucide-react';
 
 const { Title, Paragraph } = Typography;
 
@@ -90,13 +90,13 @@ const Login = ({ onLogin }) => {
               name="username" 
               rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}
             >
-              <Input size="large" prefix={<UserOutlined />} placeholder="Tên đăng nhập (admin)" />
+              <Input size="large" prefix={<User size={16} />} placeholder="Tên đăng nhập (admin)" />
             </Form.Item>
             <Form.Item 
               name="password" 
               rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
             >
-              <Input.Password size="large" prefix={<LockOutlined />} placeholder="Mật khẩu (admin)" />
+              <Input.Password size="large" prefix={<Lock size={16} />} placeholder="Mật khẩu (admin)" />
             </Form.Item>
             <Form.Item style={{ marginBottom: '16px' }}>
               <Button type="primary" htmlType="submit" size="large" block style={{ background: '#0f172a' }}>
@@ -117,7 +117,7 @@ const Login = ({ onLogin }) => {
               block 
               size="large" 
               type="default"
-              icon={<UserOutlined style={{ color: '#0ea5e9' }} />}
+              icon={<User size={16} style={{ color: '#0ea5e9' }} />}
               onClick={() => handleQuickLogin('user')}
               loading={loading === 'user'}
               style={{ textAlign: 'left', height: 'auto', padding: '12px 20px', borderRadius: '12px' }}
@@ -132,7 +132,7 @@ const Login = ({ onLogin }) => {
               block 
               size="large" 
               type="default"
-              icon={<SafetyCertificateOutlined style={{ color: '#10b981' }} />}
+              icon={<ShieldCheck size={16} style={{ color: '#10b981' }} />}
               onClick={() => handleQuickLogin('manager')}
               loading={loading === 'manager'}
               style={{ textAlign: 'left', height: 'auto', padding: '12px 20px', borderRadius: '12px' }}
@@ -147,7 +147,7 @@ const Login = ({ onLogin }) => {
               block 
               size="large" 
               type="default"
-              icon={<ShoppingCartOutlined style={{ color: '#8b5cf6' }} />}
+              icon={<ShoppingCart size={16} style={{ color: '#8b5cf6' }} />}
               onClick={() => handleQuickLogin('purchase_manager')}
               loading={loading === 'purchase_manager'}
               style={{ textAlign: 'left', height: 'auto', padding: '12px 20px', borderRadius: '12px' }}
@@ -162,7 +162,7 @@ const Login = ({ onLogin }) => {
               block 
               size="large" 
               type="default"
-              icon={<CarOutlined style={{ color: '#f59e0b' }} />}
+              icon={<Car size={16} style={{ color: '#f59e0b' }} />}
               onClick={() => handleQuickLogin('purchaser')}
               loading={loading === 'purchaser'}
               style={{ textAlign: 'left', height: 'auto', padding: '12px 20px', borderRadius: '12px' }}

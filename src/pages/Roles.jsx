@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Typography, Card, Tag, Button, Modal, Form, Input, Checkbox, Space, Popconfirm, message } from 'antd';
-import { SafetyCertificateOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { ShieldCheck, Plus, Pencil, Trash2 } from 'lucide-react';
 
 const { TextArea } = Input;
 
@@ -148,9 +148,9 @@ const Roles = () => {
       align: 'right',
       render: (_, record, index) => (
         <Space size="small">
-          <Button type="text" icon={<EditOutlined style={{ color: '#0275d8' }} />} onClick={() => handleEdit(record, index)} />
+          <Button type="text" icon={<Pencil size={16} style={{ color: '#0275d8' }} />} onClick={() => handleEdit(record, index)} />
           <Popconfirm title="Xóa vai trò này?" onConfirm={() => handleDelete(index)} okText="Đồng ý" cancelText="Hủy">
-            <Button type="text" danger icon={<DeleteOutlined />} disabled={record.role === 'Admin' || record.role === 'Trưởng bộ phận'} />
+            <Button type="text" danger icon={<Trash2 size={16} />} disabled={record.role === 'Admin' || record.role === 'Trưởng bộ phận'} />
           </Popconfirm>
         </Space>
       )
@@ -162,13 +162,13 @@ const Roles = () => {
       <div className="page-header" style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
         <div>
           <h2 className="page-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <SafetyCertificateOutlined style={{ color: '#0275d8' }} /> Quản lý Vai trò & Phân quyền
+            <ShieldCheck size={16} style={{ color: '#0275d8' }} /> Quản lý Vai trò & Phân quyền
           </h2>
           <p className="page-subtitle" style={{ margin: '5px 0 0 0', color: '#64748b' }}>
             Định nghĩa các vai trò và gán quyền hạn chi tiết trên hệ thống.
           </p>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+        <Button type="primary" icon={<Plus size={16} />} onClick={handleAdd}>
           Thêm Vai trò
         </Button>
       </div>

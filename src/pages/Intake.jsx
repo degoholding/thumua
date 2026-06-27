@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message, DatePicker, Checkbox, Row, Col, Tag } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined, UploadOutlined, CheckCircleOutlined, CloseCircleOutlined, PrinterOutlined } from '@ant-design/icons';
+import { Pencil, Trash2, Plus, Upload, CheckCircle, XCircle, Printer } from 'lucide-react';
 import dayjs from 'dayjs';
 import { defaultNcc, defaultDonVi, defaultNhanSu } from '../data';
 
@@ -256,10 +256,10 @@ const Intake = () => {
       title: 'Hành động', key: 'action', align: 'center', width: 160, fixed: 'right',
       render: (_, record, index) => (
         <Space size="small" style={{ whiteSpace: 'nowrap' }}>
-          <Button type="text" icon={<PrinterOutlined style={{ color: '#8b5cf6' }} />} onClick={() => handlePrint(record)} title="In phiếu" />
-          <Button type="text" icon={<EditOutlined style={{ color: '#0275d8' }} />} onClick={() => handleEdit(record, index)} title="Xem/Sửa" />
+          <Button type="text" icon={<Printer size={16} style={{ color: '#8b5cf6' }} />} onClick={() => handlePrint(record)} title="In phiếu" />
+          <Button type="text" icon={<Pencil size={16} style={{ color: '#0275d8' }} />} onClick={() => handleEdit(record, index)} title="Xem/Sửa" />
           <Popconfirm title="Xóa phiếu này?" onConfirm={() => handleDelete(index)}>
-            <Button type="text" danger icon={<DeleteOutlined />} title="Xóa" />
+            <Button type="text" danger icon={<Trash2 size={16} />} title="Xóa" />
           </Popconfirm>
         </Space>
       )
@@ -278,8 +278,8 @@ const Intake = () => {
       title: 'Hành động', key: 'action', align: 'center',
       render: (_, record, index) => (
         <Space size="small">
-          <Button type="text" size="small" icon={<EditOutlined style={{ color: '#0275d8' }}/>} onClick={() => handleEditProduct(record, index)} />
-          <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDeleteProduct(index)} />
+          <Button type="text" size="small" icon={<Pencil size={16} style={{ color: '#0275d8' }}/>} onClick={() => handleEditProduct(record, index)} />
+          <Button type="text" size="small" danger icon={<Trash2 size={16} />} onClick={() => handleDeleteProduct(index)} />
         </Space>
       ),
     },
@@ -339,10 +339,10 @@ const Intake = () => {
         <Space style={{ flexWrap: 'wrap' }}>
           {selectedRowKeys.length > 0 && (
             <Popconfirm title={`Xóa ${selectedRowKeys.length} phiếu yêu cầu đã chọn?`} onConfirm={handleBatchDelete} okText="Đồng ý" cancelText="Hủy">
-              <Button danger icon={<DeleteOutlined />}>Xóa ({selectedRowKeys.length})</Button>
+              <Button danger icon={<Trash2 size={16} />}>Xóa ({selectedRowKeys.length})</Button>
             </Popconfirm>
           )}
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Tạo Yêu cầu</Button>
+          <Button type="primary" icon={<Plus size={16} />} onClick={handleAdd}>Tạo Yêu cầu</Button>
         </Space>
       </div>
 
@@ -368,7 +368,7 @@ const Intake = () => {
           editingRecord && (
             <Button 
               key="print" 
-              icon={<PrinterOutlined />} 
+              icon={<Printer size={16} />} 
               onClick={() => handlePrint(editingRecord)}
             >
               In Phiếu
@@ -433,7 +433,7 @@ const Intake = () => {
           <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', marginBottom: '16px', border: '1px solid #e2e8f0' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
               <h4 style={{ margin: 0, color: '#0f172a' }}>Danh sách Sản phẩm Yêu cầu</h4>
-              <Button type="dashed" size="small" icon={<PlusOutlined />} onClick={handleAddProduct}>Thêm SP</Button>
+              <Button type="dashed" size="small" icon={<Plus size={16} />} onClick={handleAddProduct}>Thêm SP</Button>
             </div>
             <Table columns={productColumns} dataSource={products} pagination={false} size="small" bordered 
               summary={() => (
@@ -452,7 +452,7 @@ const Intake = () => {
           </Row>
           
           <Form.Item name="nccLienhe" label="Liên hệ NCC"><Input placeholder="SĐT / Email..." /></Form.Item>
-          <Form.Item label="Báo giá đính kèm (nếu có)"><Button icon={<UploadOutlined />}>Chọn file đính kèm</Button></Form.Item>
+          <Form.Item label="Báo giá đính kèm (nếu có)"><Button icon={<Upload size={16} />}>Chọn file đính kèm</Button></Form.Item>
         </Form>
       </Modal>
 

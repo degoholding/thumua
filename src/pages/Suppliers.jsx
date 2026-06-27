@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, Space, Popconfirm, message } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
+import { Pencil, Trash2, Plus, Upload, Download } from 'lucide-react';
 import { defaultNcc } from '../data';
 
 const Suppliers = () => {
@@ -97,7 +97,7 @@ const Suppliers = () => {
         <Space size="small">
           <Button 
             type="text" 
-            icon={<EditOutlined style={{ color: '#0275d8' }} />} 
+            icon={<Pencil size={16} style={{ color: '#0275d8' }} />} 
             onClick={() => handleEdit(record, index)}
           />
           <Popconfirm 
@@ -106,7 +106,7 @@ const Suppliers = () => {
             okText="Đồng ý" 
             cancelText="Hủy"
           >
-            <Button type="text" danger icon={<DeleteOutlined />} />
+            <Button type="text" danger icon={<Trash2 size={16} />} />
           </Popconfirm>
         </Space>
       ),
@@ -123,12 +123,12 @@ const Suppliers = () => {
         <Space style={{ flexWrap: 'wrap' }}>
           {selectedRowKeys.length > 0 && (
             <Popconfirm title={`Xóa ${selectedRowKeys.length} NCC đã chọn?`} onConfirm={handleBatchDelete} okText="Đồng ý" cancelText="Hủy">
-              <Button danger icon={<DeleteOutlined />}>Xóa ({selectedRowKeys.length})</Button>
+              <Button danger icon={<Trash2 size={16} />}>Xóa ({selectedRowKeys.length})</Button>
             </Popconfirm>
           )}
-          <Button icon={<UploadOutlined />}>Import CSV</Button>
-          <Button icon={<DownloadOutlined />}>Export CSV</Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+          <Button icon={<Upload size={16} />}>Import CSV</Button>
+          <Button icon={<Download size={16} />}>Export CSV</Button>
+          <Button type="primary" icon={<Plus size={16} />} onClick={handleAdd}>
             Thêm NCC
           </Button>
         </Space>
