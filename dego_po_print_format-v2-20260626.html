@@ -1,0 +1,428 @@
+<style>
+    @media print {
+        @page {
+            size: A4 portrait;
+            margin: 4mm 5mm !important;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .print-format {
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+        }
+    }
+
+    .print-format {
+        padding: 5mm 6mm !important;
+        font-family: "Arial", sans-serif;
+        font-size: 11px;
+        color: #000;
+        line-height: 1.35;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .header-wrapper {
+        position: relative;
+        width: 100%;
+        margin-bottom: 12px;
+        min-height: 55px;
+    }
+
+    .header-company {
+        font-weight: bold;
+        font-size: 12px;
+    }
+
+    .header-company .company-name {
+        color: #1F4E79;
+    }
+
+    /* Hộp thông tin biểu mẫu góc phải - dạng bảng có viền */
+    .meta-box {
+        position: absolute;
+        top: 0;
+        right: 0;
+        border-collapse: collapse;
+        font-size: 10px;
+        line-height: 1.4;
+    }
+
+    .meta-box td {
+        border: 1px solid #000;
+        padding: 2px 8px;
+        white-space: nowrap;
+    }
+
+    .meta-box .meta-title {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .title-section {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .title-main {
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 3px;
+    }
+
+    .info-section {
+        margin-bottom: 8px;
+    }
+
+    /* Thanh tiêu đề mục - màu xám nhạt giống phiếu gốc, full width, KHÔNG viền */
+    .section-title {
+        font-weight: bold;
+        text-transform: uppercase;
+        background-color: #d9d9d9;
+        padding: 4px 6px;
+        margin-bottom: 4px;
+    }
+
+    /* Bảng thông tin - KHÔNG viền, nhãn sát giá trị */
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2px;
+    }
+
+    .info-table td {
+        border: none !important;
+        padding: 1px 0 !important;
+        vertical-align: top !important;
+        line-height: 1.25 !important;
+    }
+
+    /* Đặt nhãn có độ rộng tối thiểu để giá trị bắt đầu ngay sau nhãn */
+    .info-table td.info-label {
+        width: 1% !important;
+        white-space: nowrap !important;
+        padding-right: 8px !important;
+        font-weight: bold !important;
+    }
+
+    .info-table td.info-value {
+        text-align: left !important;
+    }
+
+    /* Ẩn hình ảnh trong phần nội dung theo yêu cầu */
+    .remarks-text img {
+        display: none !important;
+    }
+
+    /* Đồng bộ format chữ trong phần "Nội dung" (rich text) với phần còn lại của biểu mẫu.
+       Ép mọi phần tử con kế thừa font, cỡ chữ, dòng và màu chung; giữ nguyên in đậm/nghiêng có chủ đích. */
+    .remarks-text,
+    .remarks-text * {
+        font-family: "Arial", sans-serif !important;
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+        color: #000 !important;
+        background: transparent !important;
+    }
+
+    .remarks-text p {
+        margin: 0 0 3px 0 !important;
+        padding: 0 !important;
+    }
+
+    .remarks-text ul,
+    .remarks-text ol {
+        margin: 0 0 3px 18px !important;
+        padding: 0 !important;
+    }
+
+    /* Bảng hàng hoá - CÓ viền đầy đủ */
+    .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        margin-bottom: 10px;
+    }
+
+    .items-table th,
+    .items-table td {
+        border: 1px solid #000;
+        padding: 6px 6px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .items-table th {
+        background-color: #d9d9d9;
+        font-weight: bold;
+    }
+
+    .text-left {
+        text-align: left !important;
+    }
+
+    .text-right {
+        text-align: right !important;
+    }
+
+    .signature-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .signature-table td {
+        border: none !important;
+        text-align: center;
+        vertical-align: top;
+        padding: 3px 10px !important;
+        width: 25%;
+    }
+
+    .signature-table tr.sign-row td {
+        height: 70px;
+    }
+
+    .sign-line {
+        border-top: 1px solid #000;
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .signature-table tr.sign-name td {
+        font-weight: bold;
+        padding-bottom: 3px !important;
+        vertical-align: bottom;
+    }
+</style>
+
+<div class="print-format">
+    <div class="header-wrapper">
+        <div class="header-company">Đơn vị: <span class="company-name">{{ (doc.company or "CÔNG TY TNHH DEGO HOLDING") |
+                upper }}</span></div>
+        <table class="meta-box">
+            <tr>
+                <td class="meta-title" colspan="2">Mẫu 003/BM/PKT</td>
+            </tr>
+            <tr>
+                <td>Phiên bản</td>
+                <td>V1-062025</td>
+            </tr>
+            <tr>
+                <td>Ngày update:</td>
+                <td>17/7/2025</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="title-section">
+        <div class="title-main">PHIẾU ĐỀ XUẤT MUA HÀNG HÓA/DỊCH VỤ</div>
+        <div>Số: {{ doc.name }}</div>
+        {% set parsed_date = frappe.utils.getdate(doc.transaction_date or frappe.utils.today()) %}
+        <div>Ngày {{ parsed_date.strftime("%d") }} tháng {{ parsed_date.strftime("%m") }} năm {{
+            parsed_date.strftime("%Y") }}</div>
+    </div>
+
+    <!-- THÔNG TIN CHUNG -->
+    <div class="info-section">
+        <div class="section-title">THÔNG TIN CHUNG</div>
+        <table class="info-table">
+            <tr>
+                <td class="info-label">Người đề xuất:</td>
+                <td class="info-value">{{ frappe.db.get_value("User", doc.requester, "full_name") or doc.requester }}
+                </td>
+            </tr>
+            <tr>
+                <td class="info-label">Chức vụ:</td>
+                <td class="info-value">{{ doc.get("custom_chức_vụ") or frappe.db.get_value("Employee", {"user_id": doc.requester}, "designation") or "" }}</td>
+            </tr>
+            <tr>
+                <td class="info-label">Hiện công tác tại bộ phận:</td>
+                <td class="info-value">{{ frappe.db.get_value("Department", doc.requester_department, "department_name")
+                    or
+                    doc.requester_department or "" }}</td>
+            </tr>
+            <tr>
+                <td class="info-label">Trưởng phòng ban/bộ phận:</td>
+                <td class="info-value">
+                    {% set employee_reports_to = frappe.db.get_value("Employee", {"user_id": doc.requester},
+                    "reports_to") %}
+                    {% set dept_head_name = "" %}
+                    {% if employee_reports_to %}
+                    {% set dept_head_name = frappe.db.get_value("Employee", employee_reports_to, "employee_name") %}
+                    {% endif %}
+                    {{ doc.get("custom_trưởng_bộ_phận") or dept_head_name or "" }}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- MỤC ĐÍCH & NỘI DUNG ĐỀ XUẤT -->
+    <div class="info-section">
+        <div class="section-title">MỤC ĐÍCH &amp; NỘI DUNG ĐỀ XUẤT</div>
+        <table class="info-table">
+            <tr>
+                <td class="info-label">Mục đích mua hàng hoá/dịch vụ:</td>
+                <td class="info-value">{{ doc.title or "" }}</td>
+            </tr>
+            <tr>
+                <td class="info-label">Thời gian cần hàng/dịch vụ:</td>
+                <td class="info-value">
+                    {% if doc.schedule_date %}
+                    {{ frappe.utils.formatdate(doc.schedule_date) }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td class="info-label">Nội dung:</td>
+                <td class="info-value remarks-text">{{ doc.remarks or "" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ITEMS TABLE -->
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th style="width: 5%;">STT</th>
+                <th style="width: 32%;" class="text-left">Tên hàng hoá/dịch vụ</th>
+                <th style="width: 12%;">Mã Hàng</th>
+                <th style="width: 7%;">ĐVT</th>
+                <th style="width: 11%;">Số lượng yêu cầu</th>
+                <th style="width: 12%;" class="text-right">Đơn giá</th>
+                <th style="width: 12%;" class="text-right">Thành tiền</th>
+                <th style="width: 9%;" class="text-left">Ghi chú</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in doc.items %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td class="text-left">{{ item.item_name }}</td>
+                <td>{{ item.item_code or "" }}</td>
+                <td>{{ item.uom or "" }}</td>
+                <td class="text-right">{{ "{:,}".format(item.qty | int) }}</td>
+                <td class="text-right">{% if item.proposed_rate | flt %}{{ "{:,.0f}".format(item.proposed_rate | flt)
+                    }}{% endif %}</td>
+                <td class="text-right">{% if item.amount | flt %}{{ "{:,.0f}".format(item.amount | flt) }}{% endif %}
+                </td>
+                <td class="text-left">{{ item.other_notes or "" }}</td>
+            </tr>
+            {% endfor %}
+
+            <!-- Phần tổng tiền có viền liền mạch với bảng giống hình gốc -->
+            <tr style="font-weight: bold;">
+                <td colspan="5" class="text-left" style="border: 1px solid #000 !important;">Tổng cộng</td>
+                <td style="border: 1px solid #000 !important;"></td>
+                <td class="text-right" style="border: 1px solid #000 !important;">{% if doc.total_amount | flt %}{{
+                    "{:,.0f}".format(doc.total_amount | flt) }}{% endif %}</td>
+                <td style="border: 1px solid #000 !important;"></td>
+            </tr>
+            <tr style="border: none !important;">
+                <td colspan="5" style="border: none !important;"></td>
+                <td class="text-right"
+                    style="border: none !important; font-weight: bold; background-color: transparent;">VAT</td>
+                <td class="text-right" style="border: none !important; font-weight: bold;">{% if doc.total_amount | flt
+                    %}{{ "{:,.0f}".format(doc.total_amount * 0.08 | flt) }}{% endif %}</td>
+                <td style="border: none !important;"></td>
+            </tr>
+            <tr style="border: none !important;">
+                <td colspan="5" style="border: none !important;"></td>
+                <td class="text-right" style="border: none !important; font-weight: bold; white-space: nowrap;">Tổng
+                    cộng thanh toán</td>
+                <td class="text-right" style="border: none !important; font-weight: bold;">{% if doc.total_amount | flt
+                    %}{{ "{:,.0f}".format(doc.total_amount * 1.08 | flt) }}{% endif %}</td>
+                <td style="border: none !important;"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- THÔNG TIN NHÀ CUNG CẤP -->
+    <div class="info-section">
+        <div class="section-title">THÔNG TIN NHÀ CUNG CẤP</div>
+        <table class="info-table">
+            <tr>
+                <td class="info-label">Tên nhà cung cấp:</td>
+                <td class="info-value">{{ doc.supplier_name or "" }}</td>
+            </tr>
+            <tr>
+                <td class="info-label">Mã số thuế:</td>
+                <td class="info-value">{{ doc.supplier_tax_id or "" }}</td>
+            </tr>
+            <tr>
+                <td class="info-label">Liên hệ:</td>
+                <td class="info-value">{{ doc.supplier_contact or "" }}</td>
+            </tr>
+            <tr>
+                <td class="info-label">Báo giá đính kèm:</td>
+                <td class="info-value">&#9744; Có &nbsp;&nbsp;&nbsp; &#9744; Không: &nbsp;&nbsp; .....</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- PHẦN DÀNH CHO BỘ PHẬN MUA HÀNG -->
+    <div class="info-section">
+        <div class="section-title">PHẦN DÀNH CHO BỘ PHẬN MUA HÀNG</div>
+        <table class="info-table">
+            <tr>
+                <td class="info-label">Thời gian cần hàng/dịch vụ:</td>
+                <td class="info-value">.....</td>
+            </tr>
+            <tr>
+                <td class="info-label">Yêu cầu khác (nếu có):</td>
+                <td class="info-value">.....</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- XÉT DUYỆT -->
+    <div class="info-section" style="margin-top: 15px;">
+        <div class="section-title">XÉT DUYỆT</div>
+        <table class="signature-table">
+            <tr style="font-weight: bold;">
+                <td>Giám đốc</td>
+                <td>TP/BP mua hàng</td>
+                <td>TP/BP đề xuất</td>
+                <td>Người lập</td>
+            </tr>
+            <tr style="font-size: 10px; font-style: italic;">
+                <td>(Ký, ghi rõ họ tên)</td>
+                <td>(Ký, ghi rõ họ tên)</td>
+                <td>(Ký, ghi rõ họ tên)</td>
+                <td>(Ký, ghi rõ họ tên)</td>
+            </tr>
+            <tr class="sign-row">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="sign-name">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{ frappe.db.get_value("User", doc.requester, "full_name") or doc.requester }}</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="sign-line"></div>
+                </td>
+                <td>
+                    <div class="sign-line"></div>
+                </td>
+                <td>
+                    <div class="sign-line"></div>
+                </td>
+                <td>
+                    <div class="sign-line"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

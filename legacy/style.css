@@ -568,9 +568,6 @@ textarea.form-control {
 /* Modal Improvements */
 .modal-content {
     max-height: 90vh;
-    overflow-y: auto;
-    resize: both;
-    overflow: auto;
     width: 70%;
     max-width: 95%;
 }
@@ -764,4 +761,21 @@ textarea.form-control {
 }
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 38px !important;
+}
+
+/* Login Screen Styles */
+.login-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-box {
+    text-align: center;
 }

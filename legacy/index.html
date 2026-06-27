@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEGO Thu Mua - Phân Quyền</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- jQuery and Select2 for Searchable Selects -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <!-- Ambient Background for Glassmorphism -->
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+    
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-box" style="width: 360px; padding: 40px 30px; background: #ffffff; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05);">
+            <img src="Dego Holding Logo.svg" alt="DEGO HOLDING" style="height: 48px; object-fit: contain; margin: 0 auto 20px auto; display: block;">
+            <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px; color: #1e293b;">Đăng nhập</h2>
+            <p style="font-size: 14px; color: #64748b; margin-bottom: 30px;">Hệ thống Quản lý Dego Holding</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%;">
+                
+                <!-- Internal Login -->
+                <div style="width: 100%; display: flex; flex-direction: column; gap: 12px;">
+                    <input type="text" id="internal-username" placeholder="Tên đăng nhập" class="form-control" style="width: 100%; height: 44px; box-sizing: border-box; text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 14px;">
+                    <input type="password" id="internal-password" placeholder="Mật khẩu" class="form-control" style="width: 100%; height: 44px; box-sizing: border-box; text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 14px;">
+                    <button id="btn-internal-login" class="btn-primary" style="width: 100%; height: 44px; justify-content: center; border-radius: 8px; font-weight: 600; font-size: 14px; background: #0f172a; color: #fff; border: none; cursor: pointer; transition: 0.2s;">Đăng nhập</button>
+                </div>
+                
+                <div style="width: 100%; display: flex; align-items: center; margin: 10px 0;">
+                    <hr style="flex: 1; border: none; border-top: 1px solid #e2e8f0;">
+                    <span style="padding: 0 15px; font-size: 12px; color: #94a3b8; font-weight: 500;">HOẶC ĐĂNG NHẬP BẰNG</span>
+                    <hr style="flex: 1; border: none; border-top: 1px solid #e2e8f0;">
+                </div>
+
+                <!-- Google Login -->
+                <div id="google-login-button" style="display: flex; justify-content: center; width: 100%;"></div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Departments -->
+    <div class="modal-overlay" id="modal-departments" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 id="modal-departments-title">Thêm Phòng ban</h3>
+                <button class="btn-close" id="btn-close-departments">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-departments">
+                    <input type="hidden" id="departments-index" value="-1">
+                    <div class="form-group">
+                        <label>Tên Phòng ban</label>
+                        <input type="text" class="form-control" id="dept-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tên Trưởng bộ phận</label>
+                        <input type="text" class="form-control" id="dept-manager" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Trưởng bộ phận</label>
+                        <input type="email" class="form-control" id="dept-email" required>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                        <button type="button" class="btn-secondary" id="btn-cancel-departments">Hủy</button>
+                        <button type="submit" class="btn-primary">Lưu thông tin</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="layout" id="app-layout" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-resizer" id="sidebar-resizer"></div>
+            <div class="sidebar-header">
+                <div class="logo-dot"></div>
+                <h1 class="logo-text">DEGO Thu Mua</h1>
+            </div>
+            
+            <nav class="sidebar-nav" id="sidebar-nav">
+                <!-- Group 1 -->
+                <div class="nav-group" id="nav-group-khaosat">
+                    <div class="nav-group-title">KHẢO SÁT</div>
+                    <ul class="nav-list">
+                        <li class="nav-item" data-page="page-intake" id="nav-intake">
+                            <span class="nav-icon">📋</span> PYC Thu Mua
+                        </li>
+                        <li class="nav-item" data-page="page-survey" id="nav-survey">
+                            <span class="nav-icon">🔍</span> Khảo sát NCC
+                        </li>
+                        <li class="nav-item" data-page="page-approve" id="nav-approve">
+                            <span class="nav-icon">✅</span> Duyệt
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Group 2 -->
+                <div class="nav-group" id="nav-group-muahang">
+                    <div class="nav-group-title">MUA HÀNG</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <span class="nav-icon">📦</span> Đơn mua
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-icon">🚚</span> Vận chuyển
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-icon">💵</span> Chi NCC
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-icon">📒</span> Công nợ
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Group 3 -->
+                <div class="nav-group">
+                    <div class="nav-group-title">HỖ TRỢ</div>
+                    <ul class="nav-list">
+                        <a href="./docs/index.html" target="_blank" style="text-decoration:none;color:inherit;">
+                            <li class="nav-item">
+                                <span class="nav-icon">📖</span> Hướng dẫn ERP
+                            </li>
+                        </a>
+                    </ul>
+                </div>
+
+                <!-- Group 3 -->
+                <div class="nav-group">
+                    <div class="nav-group-title">KHÁC</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <span class="nav-icon">⚠️</span> Sự cố
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-icon">📄</span> Hợp đồng
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-icon">🔄</span> Điều phối
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Group 4 -->
+                <div class="nav-group" id="nav-group-admin">
+                    <div class="nav-group-title">QUẢN LÝ</div>
+                    <ul class="nav-list">
+                        <li class="nav-item" data-page="page-dashboard">
+                            <span class="nav-icon">📊</span> Dashboard
+                        </li>
+                        <li class="nav-item" data-page="page-suppliers">
+                            <span class="nav-icon">🏢</span> Nhà cung cấp
+                        </li>
+                        <li class="nav-item" data-page="page-companies">
+                            <span class="nav-icon">🏢</span> Công ty thành viên
+                        </li>
+                        <li class="nav-item" data-page="page-departments">
+                            <span class="nav-icon">📁</span> Phòng ban
+                        </li>
+                        <li class="nav-item active" data-page="page-users">
+                            <span class="nav-icon">👥</span> Người dùng
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+            <!-- Header -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn-hamburger" id="sidebar-toggle">☰</button>
+                </div>
+                <div class="topbar-right" style="display: flex; align-items: center; gap: 10px;">
+                    <img id="user-avatar" src="" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; display: none;">
+                    <span class="user-info" id="user-name-display">Đang tải...</span>
+                    <button class="btn-logout" id="btn-logout-google">Đăng xuất</button>
+                </div>
+            </header>
+            <!-- Page Content: Dashboard -->
+            <div class="page-content" id="page-dashboard" style="display: none;">
+                <div class="page-header">
+                    <div class="header-titles">
+                        <h2 class="page-title">Dashboard Quản trị</h2>
+                        <p class="page-subtitle">Tổng quan hệ thống và truy cập nhanh các module.</p>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
+                    <!-- Card 1 -->
+                    <div style="background: #fff; padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.03); cursor: pointer; transition: 0.2s;" onclick="document.querySelector('[data-page=page-suppliers]').click()">
+                        <div style="font-size: 32px; margin-bottom: 15px;">🏢</div>
+                        <h3 style="margin-bottom: 8px; font-size: 18px;">Nhà cung cấp</h3>
+                        <p style="color: var(--text-muted); font-size: 13px;">Quản lý và đánh giá danh sách các nhà cung cấp vật tư, dịch vụ.</p>
+                    </div>
+                    
+                    <!-- Card 2 -->
+                    <div style="background: #fff; padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.03); cursor: pointer; transition: 0.2s;" onclick="document.querySelector('[data-page=page-companies]').click()">
+                        <div style="font-size: 32px; margin-bottom: 15px;">🏢</div>
+                        <h3 style="margin-bottom: 8px; font-size: 18px;">Công ty thành viên</h3>
+                        <p style="color: var(--text-muted); font-size: 13px;">Quản lý danh sách và thông tin các công ty thành viên trong hệ thống.</p>
+                    </div>
+                    
+                    <!-- Card 3 -->
+                    <div style="background: #fff; padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.03); cursor: pointer; transition: 0.2s;" onclick="document.querySelector('[data-page=page-users]').click()">
+                        <div style="font-size: 32px; margin-bottom: 15px;">👥</div>
+                        <h3 style="margin-bottom: 8px; font-size: 18px;">Người dùng</h3>
+                        <p style="color: var(--text-muted); font-size: 13px;">Quản lý nhân sự, phân bổ phòng ban và cấp quyền truy cập hệ thống.</p>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div style="background: #fff; padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.03); cursor: pointer; transition: 0.2s;" onclick="document.querySelector('[data-page=page-departments]').click()">
+                        <div style="font-size: 32px; margin-bottom: 15px;">📁</div>
+                        <h3 style="margin-bottom: 8px; font-size: 18px;">Phòng ban</h3>
+                        <p style="color: var(--text-muted); font-size: 13px;">Danh sách phòng ban và trưởng bộ phận (tự động trích xuất).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content: Suppliers -->
+            <div class="page-content" id="page-suppliers" style="display: none;">
+                <div class="page-header">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div>
+                            <h2 class="page-title" style="margin: 0;">Nhà cung cấp (NCC)</h2>
+                            <p class="page-subtitle" style="margin: 5px 0 0 0;">Quản lý cơ sở dữ liệu các nhà cung cấp.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="file" id="import-ncc-file" accept=".csv" style="display:none;">
+                            <button class="btn-secondary" onclick="document.getElementById('import-ncc-file').click()">📥 Import CSV</button>
+                            <button class="btn-secondary" id="btn-export-ncc">📤 Export CSV</button>
+                            <button class="btn-primary" id="btn-add-ncc">+ Thêm NCC</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nhà cung cấp</th>
+                                <th>Địa chỉ NCC</th>
+                                <th>MST NCC</th>
+                                <th class="text-right" style="white-space: nowrap; width: 100px;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ncc-table-body">
+                            <!-- JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Page Content: Users -->
+            <div class="page-content" id="page-users" style="display: none;">
+                <div class="page-header">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div>
+                            <h2 class="page-title" style="margin: 0;">Người dùng (Nhân sự)</h2>
+                            <p class="page-subtitle" style="margin: 5px 0 0 0;">Quản lý danh sách nhân sự được phép sử dụng hệ thống.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="file" id="import-nhansu-file" accept=".csv" style="display:none;">
+                            <button class="btn-secondary" onclick="document.getElementById('import-nhansu-file').click()">📥 Import CSV</button>
+                            <button class="btn-secondary" id="btn-export-nhansu">📤 Export CSV</button>
+                            <button class="btn-primary" id="btn-add-nhansu">+ Thêm Nhân sự</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Họ và Tên</th>
+                                <th>Phòng ban</th>
+                                <th>Vai trò</th>
+                                <th>Trưởng bộ phận</th>
+                                <th>SĐT</th>
+                                <th>Email</th>
+                                <th class="text-right" style="white-space: nowrap; width: 100px;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nhansu-table-body">
+                            <!-- JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Page Content: Companies -->
+            <div class="page-content" id="page-companies" style="display: none;">
+                <div class="page-header">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div>
+                            <h2 class="page-title" style="margin: 0;">Công ty thành viên</h2>
+                            <p class="page-subtitle" style="margin: 5px 0 0 0;">Quản lý cơ sở dữ liệu các công ty thành viên.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="file" id="import-donvi-file" accept=".csv" style="display:none;">
+                            <button class="btn-secondary" onclick="document.getElementById('import-donvi-file').click()">📥 Import CSV</button>
+                            <button class="btn-secondary" id="btn-export-donvi">📤 Export CSV</button>
+                            <button class="btn-primary" id="btn-add-donvi">+ Thêm Công ty</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tên ngắn gọn</th>
+                                <th>Tên đầy đủ CTY lấy hóa đơn</th>
+                                <th>Địa chỉ</th>
+                                <th>MST</th>
+                                <th class="text-right" style="white-space: nowrap; width: 100px;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="donvi-table-body">
+                            <!-- JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Page Content: Departments -->
+            <div class="page-content" id="page-departments" style="display: none;">
+                <div class="page-header">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div>
+                            <h2 class="page-title" style="margin: 0;">Phòng ban</h2>
+                            <p class="page-subtitle" style="margin: 5px 0 0 0;">Quản lý danh sách phòng ban và trưởng bộ phận mặc định.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="file" id="import-departments-file" accept=".csv" style="display:none;">
+                            <button class="btn-secondary" onclick="document.getElementById('import-departments-file').click()">📥 Import CSV</button>
+                            <button class="btn-secondary" id="btn-export-departments">📤 Export CSV</button>
+                            <button class="btn-primary" id="btn-add-departments">+ Thêm Phòng ban</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Phòng ban</th>
+                                <th>Trưởng bộ phận</th>
+                                <th>Email TBP</th>
+                                <th class="text-right" style="white-space: nowrap; width: 100px;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="departments-table-body">
+                            <!-- JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Page Content: Intake -->
+            <div class="page-content" id="page-intake" style="display: none;">
+                <div class="page-header">
+                    <div class="header-titles">
+                        <h2 class="page-title">Danh sách Phiếu Yêu Cầu Thu Mua</h2>
+                        <p class="page-subtitle">Nơi tiếp nhận yêu cầu từ các bộ phận và phân bổ cho NSTM xử lý.</p>
+                    </div>
+                    <button class="btn-primary" id="btn-add-request">+ Tạo Yêu cầu</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã PYC</th>
+                                <th>Ngày tạo</th>
+                                <th>Bộ phận YC</th>
+                                <th>Mục đích</th>
+                                <th>Tổng tiền dự kiến</th>
+                                <th>Trạng thái</th>
+                                <th class="text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="intake-table-body">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal: Form Tạo Yêu Cầu -->
+            <div class="modal-overlay" id="modal-intake" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Tạo Yêu cầu Thu mua mới</h3>
+                        <button class="btn-close-modal" id="btn-close-intake">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-intake">
+                            <input type="hidden" id="intake-index" value="-1">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Mã phiếu yêu cầu</label>
+                                    <input type="text" class="form-control" id="pyc-code" placeholder="Để trống để tự động tạo" style="background:#f8fafc;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Ngày tiếp nhận <span style="color: red;">*</span></label>
+                                    <input type="date" class="form-control" id="pyc-ngaytn" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: -10px; margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; font-size: 13px;">
+                                    <input type="checkbox" id="pyc-show-code" checked style="margin-right: 6px; width: 14px; height: 14px;">
+                                    Hiển thị Mã phiếu trên form in
+                                </label>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Công ty <span style="color: red;">*</span></label>
+                                    <select class="form-control" id="pyc-donvi" required>
+                                        <option value="">-- Chọn Công ty --</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nhân sự YC <span style="color: red;">*</span></label>
+                                    <select class="form-control" id="pyc-nhansu" required>
+                                        <option value="">-- Chọn Nhân sự --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Bộ phận YC <span style="color: red;">*</span></label>
+                                    <input type="text" class="form-control" id="pyc-bophan" required placeholder="Tự động điền theo Nhân sự...">
+                                </div>
+                                <div class="form-group">
+                                    <label>Chức vụ (Nếu có)</label>
+                                    <input type="text" class="form-control" id="pyc-chucvu">
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Trưởng bộ phận (TBP) / Người liên hệ <span style="color: red;">*</span></label>
+                                    <input type="text" class="form-control" id="pyc-tbp" required placeholder="Tự động điền theo Nhân sự...">
+                                </div>
+                                <div class="form-group" style="display: none;">
+                                    <label>NSTM Phụ trách (Phân bổ) <span style="font-size: 11px; color: #888;">(Chỉ team thu mua)</span></label>
+                                    <select class="form-control" id="pyc-nstm">
+                                        <option value="">-- Chọn NSTM --</option>
+                                        <option value="Mr Hậu">Mr Hậu</option>
+                                        <option value="Ms Quyên">Ms Quyên</option>
+                                        <option value="Mr Tiên">Mr Tiên</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Mục đích mua hàng <span style="color: red;">*</span></label>
+                                <textarea class="form-control" id="pyc-mucdich" rows="2" required placeholder="Nhập mục đích mua hàng hóa/dịch vụ..."></textarea>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Thời gian cần hàng/dịch vụ</label>
+                                    <input type="date" class="form-control" id="pyc-ngaytrakq" placeholder="Nhập thời gian yêu cầu...">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Nội dung mua hàng</label>
+                                <textarea class="form-control" id="pyc-noidung" rows="2" placeholder="Nhập nội dung chi tiết..."></textarea>
+                            </div>
+                            
+                            <div class="form-group" style="background: var(--active-bg); padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <h4 style="margin: 0; color: var(--primary-color);">Danh sách Sản phẩm Yêu cầu</h4>
+                                    <button type="button" class="btn-secondary" id="btn-add-product" style="padding: 4px 10px; font-size: 12px;">+ Thêm SP</button>
+                                </div>
+
+                                <!-- FORM THÊM / SỬA SP -->
+                                <div id="product-edit-form" style="display: none; background: #fff; padding: 15px; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 15px;">
+                                    <h5 style="margin-top: 0; margin-bottom: 10px; color: var(--text-color); border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">Sửa / Thêm thông tin sản phẩm</h5>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label>Mã hàng</label>
+                                            <input type="text" class="form-control" id="p-form-code" placeholder="Mã">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tên sản phẩm <span style="color:red">*</span></label>
+                                            <input type="text" class="form-control" id="p-form-name" placeholder="Tên SP">
+                                        </div>
+                                    </div>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label>ĐVT <span style="color:red">*</span></label>
+                                            <input type="text" class="form-control" id="p-form-unit" placeholder="ĐVT">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Số lượng <span style="color:red">*</span></label>
+                                            <input type="number" class="form-control" id="p-form-qty" placeholder="SL" min="0">
+                                        </div>
+                                    </div>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label>Đơn giá</label>
+                                            <input type="number" class="form-control" id="p-form-price" placeholder="Giá" min="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Thành tiền</label>
+                                            <input type="text" class="form-control" id="p-form-amount" readonly style="background:#f8fafc; cursor: not-allowed;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ghi chú</label>
+                                        <input type="text" class="form-control" id="p-form-note" placeholder="Ghi chú">
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <input type="hidden" id="p-form-index" value="-1">
+                                        <button type="button" class="btn-secondary" id="btn-cancel-product" style="padding: 6px 12px; font-size: 13px;">Hủy</button>
+                                        <button type="button" class="btn-primary" id="btn-save-product" style="padding: 6px 12px; font-size: 13px;">Lưu Sản phẩm</button>
+                                    </div>
+                                </div>
+
+                                <div style="overflow-x: auto; border: 1px solid #cbd5e1; border-radius: 8px;">
+                                    <table class="data-table" id="pyc-products-table" style="min-width: 800px; border-bottom: none;">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 50px; text-align: center;">STT</th>
+                                                <th>Mã hàng</th>
+                                                <th style="width: 25%;">Tên sản phẩm</th>
+                                                <th style="width: 80px; text-align: center;">ĐVT</th>
+                                                <th style="width: 100px; text-align: right;">Số lượng</th>
+                                                <th style="width: 120px; text-align: right;">Đơn giá</th>
+                                                <th style="width: 120px; text-align: right;">Thành tiền</th>
+                                                <th>Ghi chú</th>
+                                                <th style="width: 80px; text-align: center;">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="pyc-products-body" style="background-color: white;">
+                                            <!-- Product rows -->
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6" style="text-align: right; font-weight: bold;">Cộng:</td>
+                                                <td id="pyc-sub-amount" style="font-weight: bold; text-align: right;">0</td>
+                                                <td colspan="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6" style="text-align: right; font-weight: bold; vertical-align: middle;">VAT (VNĐ):</td>
+                                                <td><input type="number" id="pyc-vat-amount" class="form-control" style="text-align: right; padding: 4px 8px; height: 30px; font-weight: bold; width: 100%; box-sizing: border-box;" placeholder="0"></td>
+                                                <td colspan="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6" style="text-align: right; font-weight: bold;">Tổng cộng thanh toán:</td>
+                                                <td id="pyc-total-amount" style="font-weight: bold; color: var(--danger-color); text-align: right;">0</td>
+                                                <td colspan="2"></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Tên nhà cung cấp đề xuất (Nếu có)</label>
+                                    <select class="form-control" id="pyc-ncc">
+                                        <option value="">-- Chọn hoặc nhập tên NCC --</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Mã số thuế NCC</label>
+                                    <input type="text" class="form-control" id="pyc-ncc-mst">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Liên hệ NCC</label>
+                                <input type="text" class="form-control" id="pyc-ncc-lienhe" placeholder="SĐT / Email...">
+                            </div>
+                            <div class="form-group">
+                                <label>Báo giá đính kèm (nếu có)</label>
+                                <input type="file" id="pyc-attachment" class="form-control" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg">
+                            </div>
+                        </form>
+                    <div class="modal-footer" style="display: flex; justify-content: flex-end; align-items: center;">
+                        <div id="modal-intake-approve-actions" style="display: none; gap: 10px; margin-right: auto;">
+                            <button type="button" class="btn-action" id="btn-modal-approve" style="color: white; background: #157347; border: 1px solid #157347; border-radius: 6px; padding: 10px 16px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 0.2s;">Phê duyệt</button>
+                            <button type="button" class="btn-action" id="btn-modal-reject" style="color: white; background: #dc3545; border: 1px solid #dc3545; border-radius: 6px; padding: 10px 16px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 0.2s;">Hủy yêu cầu</button>
+                        </div>
+                        <button type="button" class="btn-secondary" id="btn-cancel-intake" style="margin-right: 8px;">Hủy</button>
+                        <button type="submit" form="form-intake" class="btn-primary" id="btn-submit-intake">Lưu & Gửi Duyệt</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Đơn vị Form -->
+            <div class="modal-overlay" id="modal-donvi" style="display: none;">
+                <div class="modal-content" style="width: 500px;">
+                    <div class="modal-header">
+                        <h3 id="modal-donvi-title">Thêm Đơn vị</h3>
+                        <button class="btn-close-modal" id="btn-close-donvi">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-donvi">
+                            <input type="hidden" id="donvi-index" value="-1">
+                            <div class="form-group">
+                                <label>Tên Đơn vị (Ngắn gọn)</label>
+                                <input type="text" class="form-control" id="donvi-short" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Tên đầy đủ CTY lấy hóa đơn</label>
+                                <input type="text" class="form-control" id="donvi-full" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Địa chỉ</label>
+                                <input type="text" class="form-control" id="donvi-address">
+                            </div>
+                            <div class="form-group">
+                                <label>Mã số thuế (MST)</label>
+                                <input type="text" class="form-control" id="donvi-mst">
+                            </div>
+                            <div class="form-actions" style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                                <button type="button" class="btn-secondary" id="btn-cancel-donvi">Hủy</button>
+                                <button type="submit" class="btn-primary">Lưu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Nhân sự Form -->
+            <div class="modal-overlay" id="modal-nhansu" style="display: none;">
+                <div class="modal-content" style="width: 500px;">
+                    <div class="modal-header">
+                        <h3 id="modal-nhansu-title">Thêm Nhân sự & Phân bổ</h3>
+                        <button class="btn-close-modal" id="btn-close-nhansu">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-nhansu">
+                            <input type="hidden" id="nhansu-index" value="-1">
+                            <div class="form-group">
+                                <label>Họ và Tên</label>
+                                <input type="text" class="form-control" id="ns-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phòng ban</label>
+                                <select class="form-control" id="ns-dept" required>
+                                    <option value="">-- Chọn Phòng ban --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Vai trò</label>
+                                <select class="form-control" id="ns-role" required>
+                                    <option value="Nhân sự">Nhân sự</option>
+                                    <option value="Trưởng bộ phận">Trưởng bộ phận</option>
+                                    <option value="Nhân sự thu mua">Nhân sự thu mua</option>
+                                    <option value="Trưởng bộ phận thu mua">Trưởng bộ phận thu mua</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Trưởng bộ phận</label>
+                                <input type="text" class="form-control" id="ns-manager" placeholder="Được điền tự động" readonly required>
+                            </div>
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="text" class="form-control" id="ns-phone">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" class="form-control" id="ns-email">
+                            </div>
+                            <div class="form-actions" style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                                <button type="button" class="btn-secondary" id="btn-cancel-nhansu">Hủy</button>
+                                <button type="submit" class="btn-primary">Lưu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page Content: Survey -->
+            <div class="page-content" id="page-survey" style="display: none;">
+                <div class="page-header">
+                    <div class="header-titles">
+                        <h2 class="page-title">Khảo sát Nhà cung cấp</h2>
+                        <p class="page-subtitle">Nhập thông tin khảo sát báo giá từ ít nhất 2 NCC cho mỗi yêu cầu. Báo giá sẽ được QLTM duyệt.</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã PYC</th>
+                                <th>Tên hàng hóa</th>
+                                <th>Số lượng YC</th>
+                                <th>NSTM Phụ trách</th>
+                                <th>Số lượng NCC</th>
+                                <th>Lab Test</th>
+                                <th class="text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="survey-table-body">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal: Form Đánh Giá NCC -->
+            <div class="modal-overlay" id="modal-survey" style="display: none;">
+                <div class="modal-content" style="width: 800px; max-width: 95%;">
+                    <div class="modal-header">
+                        <h3 id="survey-modal-title">Khảo sát báo giá - PYC-002</h3>
+                        <button class="btn-close-modal" id="btn-close-survey">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="background: var(--active-bg); padding: 12px; border-radius: 6px; margin-bottom: 20px;">
+                            <strong>Nhu cầu:</strong> Mua 10 Lít Cồn y tế 90 độ dùng cho vệ sinh phòng thí nghiệm
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <h4 style="font-size: 15px; color: var(--primary-color);">Danh sách NCC Khảo sát</h4>
+                            <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" id="btn-add-ncc">+ Thêm NCC Mới</button>
+                        </div>
+                        
+                        <!-- NCC Card 1 -->
+                        <div class="ncc-card">
+                            <div class="ncc-card-header">
+                                <strong>1. NCC Hóa chất Á Châu</strong>
+                                <span class="badge badge-admin">Chưa duyệt</span>
+                            </div>
+                            <div class="ncc-card-body">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Đơn giá (VNĐ)</label>
+                                        <input type="number" class="form-control" value="25000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Thuế VAT (%)</label>
+                                        <select class="form-control">
+                                            <option>8%</option>
+                                            <option selected>10%</option>
+                                            <option>0%</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>MOQ (SL tối thiểu)</label>
+                                        <input type="text" class="form-control" value="5 Lít">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Thời gian giao (Ngày)</label>
+                                        <input type="number" class="form-control" value="2">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Đánh giá của Lab (Nếu có mẫu)</label>
+                                    <input type="text" class="form-control" value="Đạt tiêu chuẩn y tế" style="background: #f9fafb; border-color: #bbf7d0;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NCC Card 2 -->
+                        <div class="ncc-card" style="margin-top: 16px;">
+                            <div class="ncc-card-header">
+                                <strong>2. Vật tư Y tế Việt Mỹ</strong>
+                                <span class="badge badge-admin">Chưa duyệt</span>
+                            </div>
+                            <div class="ncc-card-body">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Đơn giá (VNĐ)</label>
+                                        <input type="number" class="form-control" value="28000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Thuế VAT (%)</label>
+                                        <select class="form-control">
+                                            <option>8%</option>
+                                            <option selected>10%</option>
+                                            <option>0%</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>MOQ (SL tối thiểu)</label>
+                                        <input type="text" class="form-control" value="1 Lít">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Thời gian giao (Ngày)</label>
+                                        <input type="number" class="form-control" value="1">
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Đánh giá của Lab (Nếu có mẫu)</label>
+                                    <input type="text" class="form-control" placeholder="Đang chờ kết quả...">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-secondary" id="btn-cancel-survey">Đóng</button>
+                        <button class="btn-primary" id="btn-submit-survey">Lưu & Trình Duyệt</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content: Suppliers (MASTER_NCC) -->
+            <div class="page-content" id="page-suppliers" style="display: none;">
+                <div class="page-header">
+                    <div class="header-titles">
+                        <h2 class="page-title">Quản lý Nhà cung cấp</h2>
+                        <p class="page-subtitle">Danh mục gốc (Master Data) lưu trữ thông tin các Nhà cung cấp đã được xác minh.</p>
+                    </div>
+                    <button class="btn-primary" id="btn-add-supplier">+ Thêm Nhà cung cấp</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã NCC</th>
+                                <th>Tên Nhà cung cấp</th>
+                                <th>Nhóm hàng hóa</th>
+                                <th>Địa chỉ</th>
+                                <th>Email</th>
+                                <th class="text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supplier-table-body">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal: Form Tạo Nhà cung cấp -->
+            <div class="modal-overlay" id="modal-ncc" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modal-ncc-title">Thêm Nhà cung cấp mới</h3>
+                        <button class="btn-close-modal" id="btn-close-ncc">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-ncc">
+                            <input type="hidden" id="ncc-index" value="-1">
+                            <div class="form-group">
+                                <label>Tên Nhà cung cấp (Pháp nhân hoặc Thương hiệu)</label>
+                                <input type="text" class="form-control" id="ncc-name" required placeholder="VD: Công ty TNHH Nhựa Rạng Đông">
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Địa chỉ</label>
+                                    <input type="text" class="form-control" id="ncc-address" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Mã số thuế</label>
+                                    <input type="text" class="form-control" id="ncc-mst" required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="btn-cancel-ncc">Hủy bỏ</button>
+                        <button type="submit" form="form-ncc" class="btn-primary" id="btn-submit-ncc">Lưu thông tin</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Print Template (Hidden by default) -->
+    <div id="print-template" class="print-container">
+        <div class="print-header">
+            <div class="print-logo">
+                <span style="font-weight: normal; font-size: 14px;">Mã đơn vị:</span> <strong style="font-size: 14px; text-transform: uppercase;" id="print-company-name">CÔNG TY TNHH DEGO HOLDING</strong>
+            </div>
+            <div class="print-doc-info-box">
+                <table style="border-collapse: collapse; width: 220px; font-size: 11px;">
+                    <tr>
+                        <td colspan="2" style="border: 1px solid black; padding: 2px 5px; text-align: center;">Mẫu 003/BM/PKT</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; border-right: none; padding: 2px 5px;">Phiên bản</td>
+                        <td style="border: 1px solid black; border-left: none; padding: 2px 5px; text-align: right;">V1-062025</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; border-right: none; padding: 2px 5px;">Ngày update:</td>
+                        <td style="border: 1px solid black; border-left: none; padding: 2px 5px; text-align: right;">07-11-25</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="print-title">
+            <h1 style="font-family: Arial, Helvetica, sans-serif; font-size: 20px; font-weight: bold; margin-bottom: 5px;">PHIẾU ĐỀ XUẤT MUA HÀNG HÓA/DỊCH VỤ</h1>
+            <p style="font-size: 13px;">Số: <span id="print-code-sub"></span></p>
+            <p style="font-size: 13px;">Ngày <span id="print-day"></span> tháng <span id="print-month"></span> năm <span id="print-year"></span></p>
+        </div>
+
+        <div class="print-section">
+            <div class="print-section-title-box">THÔNG TIN CHUNG</div>
+            <table class="print-info-table">
+                <tr>
+                    <td width="30%">Người đề xuất:</td>
+                    <td width="70%" id="print-requester"></td>
+                </tr>
+                <tr>
+                    <td>Chức vụ:</td>
+                    <td id="print-role"></td>
+                </tr>
+                <tr>
+                    <td>Hiện công tác tại bộ phận:</td>
+                    <td id="print-dept"></td>
+                </tr>
+                <tr>
+                    <td>Trưởng phòng ban/bộ phận:</td>
+                    <td id="print-manager"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="print-section">
+            <div class="print-section-title-box">MỤC ĐÍCH & NỘI DUNG ĐỀ XUẤT</div>
+            <table class="print-info-table">
+                <tr>
+                    <td width="30%">Mục đích mua hàng hoá/dịch vụ:</td>
+                    <td width="70%" id="print-purpose"></td>
+                </tr>
+                <tr>
+                    <td>Thời gian cần hàng/dịch vụ:</td>
+                    <td id="print-deadline"></td>
+                </tr>
+                <tr>
+                    <td>Nội dung:</td>
+                    <td id="print-content"></td>
+                </tr>
+            </table>
+            
+            <table class="print-items-table" style="margin-top: 10px;">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">STT</th>
+                        <th>Tên hàng hoá/dịch vụ</th>
+                        <th style="width: 80px;">Mã Hàng</th>
+                        <th style="width: 60px;">ĐVT</th>
+                        <th style="width: 80px;">Số lượng<br>yêu cầu</th>
+                        <th style="width: 90px;">Đơn giá</th>
+                        <th style="width: 100px;">Thành tiền</th>
+                        <th style="width: 120px;">Ghi chú</th>
+                    </tr>
+                </thead>
+                <tbody id="print-items-body">
+                    <!-- Items -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="6" style="text-align: right; font-weight: bold; padding: 5px 10px 5px 5px; border-left: none; border-right: none; border-bottom: none;">Tổng cộng</td>
+                        <td id="print-sub-total" style="text-align: right; font-weight: bold; padding: 5px; border-left: none; border-right: none; border-bottom: none;"></td>
+                        <td style="border-left: none; border-right: none; border-bottom: none;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="text-align: right; font-weight: bold; padding: 5px 10px 5px 5px; border: none;">VAT</td>
+                        <td id="print-vat" style="text-align: right; font-weight: bold; padding: 5px; border: none;">-</td>
+                        <td style="border: none;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="text-align: right; font-weight: bold; padding: 5px 10px 5px 5px; border: none;">Tổng cộng thanh toán</td>
+                        <td id="print-total" style="text-align: right; font-weight: bold; padding: 5px; border: none;"></td>
+                        <td style="border: none;"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="print-section" id="print-ncc-section">
+            <div class="print-section-title-box">THÔNG TIN NHÀ CUNG CẤP</div>
+            <table class="print-info-table">
+                <tr>
+                    <td width="20%">Tên nhà cung cấp:</td>
+                    <td width="80%" id="print-ncc"></td>
+                </tr>
+                <tr>
+                    <td>Mã số thuế:</td>
+                    <td id="print-ncc-mst"></td>
+                </tr>
+                <tr>
+                    <td>Liên hệ:</td>
+                    <td id="print-ncc-lienhe"></td>
+                </tr>
+                <tr>
+                    <td>Báo giá đính kèm:</td>
+                    <td>
+                        <span id="print-baogia-co" style="display: inline-block; width: 15px; height: 15px; border: 1px solid black; margin-right: 5px; vertical-align: middle; text-align: center; line-height: 15px; font-size: 14px; font-weight: bold;"></span> Có 
+                        <span id="print-baogia-khong" style="display: inline-block; width: 15px; height: 15px; border: 1px solid black; margin-right: 5px; margin-left: 15px; vertical-align: middle; text-align: center; line-height: 15px; font-size: 14px; font-weight: bold;"></span> Không
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="print-section">
+            <div class="print-section-title-box">PHẦN DÀNH CHO BỘ PHẬN MUA HÀNG</div>
+            <table class="print-info-table">
+                <tr>
+                    <td width="30%">Thời gian cần hàng/dịch vụ:</td>
+                    <td width="70%">...................................................................................................................................</td>
+                </tr>
+                <tr>
+                    <td>Yêu cầu khác (nếu có):</td>
+                    <td>...................................................................................................................................</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="print-signatures">
+            <div class="sign-box">
+                <p><strong>Giám đốc</strong></p>
+                <p class="sign-note">(Ký, ghi rõ họ tên)</p>
+                <div style="height: 60px;"></div>
+                <div class="sign-line" style="margin-top: 0;"></div>
+            </div>
+            <div class="sign-box">
+                <p><strong>TP/BP mua hàng</strong></p>
+                <p class="sign-note">(Ký, ghi rõ họ tên)</p>
+                <div style="height: 60px;"></div>
+                <div class="sign-line" style="margin-top: 0;"></div>
+            </div>
+            <div class="sign-box">
+                <p><strong>TP/BP đề xuất</strong></p>
+                <p class="sign-note">(Ký, ghi rõ họ tên)</p>
+                <div style="height: 60px;"></div>
+                <div class="sign-line" style="margin-top: 0;"></div>
+            </div>
+            <div class="sign-box">
+                <p><strong>Người lập</strong></p>
+                <p class="sign-note">(Ký, ghi rõ họ tên)</p>
+                <div style="height: 60px; display: flex; align-items: flex-end; justify-content: center;">
+                    <p id="print-creator-name" style="margin: 0; font-weight: bold;"></p>
+                </div>
+                <div class="sign-line" style="margin-top: 0;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=4"></script>
+</body>
+</html>

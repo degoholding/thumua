@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>BRD · Module Tạo Phiếu Yêu Cầu (PYC) · DEGO Holding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ╔══════════════════════════════════════════════════════════════════╗
+   ║   ÁP DỤNG MẪU ĐỊNH DẠNG CHUẨN — DEGO HOLDING (STYLE-DEGO-2026 v1.0)║
+   ║   Nội dung: BRD Module Tạo Phiếu Yêu Cầu (PYC)                    ║
+   ╚══════════════════════════════════════════════════════════════════╝ */
+
+/* ============================ DESIGN TOKENS (BẢNG MÀU) ============================ */
+:root{
+  --teal:        #1E7F9C;
+  --teal-dark:   #115E7D;
+  --navy:        #1A4D6B;
+  --green:       #6DBF3C;
+  --red:         #C0392B;
+  --amber:       #E0A526;
+
+  --ink:         #1F2937;
+  --gray:        #5B6770;
+  --gray-en:     #8A95A0;
+  --line:        #D2DBE2;
+  --link:        #1A5FB4;
+
+  --bg-warn:     #FFF6E0;
+  --bg-info:     #E8F3F8;
+  --bg-ok:       #E6F4EA;
+  --bg-row-alt:  #F4F8FA;
+  --bg-total:    #EAF3F7;
+
+  --font:        'Inter','Segoe UI',Arial,sans-serif;
+
+  --pad-page:    9mm 16mm 14mm;
+  --radius:      4px;
+  --gap:         14px;
+}
+
+/* ============================ KHUNG TRANG A4 ============================ */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#5b6670;font-family:var(--font);color:var(--ink);
+     -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+.page{
+  width:210mm;min-height:297mm;background:#fff;margin:10mm auto;
+  padding:var(--pad-page);position:relative;
+  display:flex;flex-direction:column;
+  font-size:10.5pt;line-height:1.5;
+}
+@media print{
+  body{background:#fff;}
+  .page{margin:0;box-shadow:none;page-break-after:always;}
+}
+@page{size:A4;margin:0;}
+
+/* ============================ ① RUNNING HEADER ============================ */
+.rh{display:flex;justify-content:space-between;align-items:flex-start;
+    border-bottom:2px solid var(--teal);padding-bottom:6px;margin-bottom:14px;}
+.logo svg{height:40px;width:auto;display:block;}
+.rh-meta{text-align:right;font-size:7.5pt;color:var(--gray);line-height:1.5;}
+.rh-meta b{display:block;font-size:11pt;color:var(--navy);letter-spacing:.5px;}
+.rh-meta i{display:block;font-style:italic;color:var(--gray-en);font-size:7pt;letter-spacing:1px;}
+
+/* ============================ ② RUNNING FOOTER ============================ */
+.rf{margin-top:auto;border-top:1px solid var(--line);padding-top:6px;
+    font-size:7.5pt;color:var(--gray);}
+.rf-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;font-weight:600;}
+.rf-row .l{text-align:left;}
+.rf-row .c{text-align:center;color:var(--gray-en);font-weight:400;}
+.rf-row .r{text-align:right;}
+.rf-sub{text-align:center;font-style:italic;color:var(--gray-en);font-size:7pt;margin-top:2px;}
+
+/* ============================ ③ TIÊU ĐỀ LỚN ============================ */
+.doc-title{font-size:21pt;font-weight:800;color:var(--navy);text-align:center;
+           letter-spacing:-.3px;margin:12px 0 4px;line-height:1.12;}
+.doc-subtitle{text-align:center;color:var(--gray);font-size:10pt;margin-bottom:16px;}
+
+/* ============================ ④ BẢNG METADATA ============================ */
+.meta{width:100%;border-collapse:collapse;margin-bottom:18px;}
+.meta td{border:1px solid var(--line);padding:8px 12px;vertical-align:top;font-size:9.5pt;}
+.meta .k{width:21%;background:var(--bg-info);border-left:4px solid var(--teal);}
+.meta .k b{color:var(--teal);display:block;font-size:9.5pt;}
+.meta .k i{color:var(--gray-en);font-style:italic;font-size:8pt;font-weight:400;}
+.meta .v{width:29%;}
+
+/* ============================ ⑤ NHÃN "PHẦN X" + ⑥ ĐỀ MỤC CHÍNH ============================ */
+.part-label{font-size:10.8pt;font-weight:700;letter-spacing:.5px;color:var(--navy);
+            margin:6px 0 4px;}
+.section{display:flex;align-items:stretch;margin-bottom:14px;border-radius:var(--radius);
+         overflow:hidden;}
+.section .num{background:var(--green);color:#fff;font-weight:800;font-size:15pt;
+              display:flex;align-items:center;justify-content:center;width:44px;flex:none;}
+.section .bar{background:var(--teal);color:#fff;flex:1;padding:10px 16px;
+              display:flex;align-items:baseline;gap:12px;}
+.section .bar b{font-size:13.5pt;font-weight:700;letter-spacing:.3px;color:#fff;}
+.section .bar span{font-size:9.5pt;font-weight:400;opacity:.85;font-style:italic;}
+
+/* ============================ ⑦ ĐỀ MỤC CON ============================ */
+.h3{font-size:11pt;font-weight:700;color:var(--navy);margin:14px 0 8px;}
+
+/* ============================ ⑧ THÂN BÀI ============================ */
+p{margin-bottom:var(--gap);}
+.lead{color:var(--ink);}
+strong,b{color:var(--navy);}
+.fig{color:var(--teal);font-weight:700;}
+a{color:var(--link);text-decoration:underline;word-break:break-all;}
+
+ul{margin:0 0 var(--gap) 0;padding-left:0;list-style:none;}
+ul li{position:relative;padding-left:18px;margin-bottom:6px;}
+ul li::before{content:"•";color:var(--teal);position:absolute;left:2px;font-weight:700;}
+
+ol.steps{margin:0 0 var(--gap) 0;padding-left:0;list-style:none;counter-reset:st;}
+ol.steps li{position:relative;padding-left:30px;margin-bottom:8px;counter-increment:st;}
+ol.steps li::before{content:counter(st);position:absolute;left:0;top:1px;
+  width:20px;height:20px;background:var(--teal);color:#fff;border-radius:50%;
+  font-size:8.5pt;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/* ============================ ⑨ BẢNG DỮ LIỆU ============================ */
+table.data{width:100%;border-collapse:collapse;margin-bottom:var(--gap);font-size:9pt;}
+table.data thead th{background:var(--teal);color:#fff;font-weight:700;text-align:left;
+                    padding:9px 10px;border:1px solid var(--teal);vertical-align:top;}
+table.data thead th small{display:block;font-weight:400;font-size:7.5pt;opacity:.8;font-style:italic;}
+table.data tbody td{border:1px solid var(--line);padding:8px 10px;vertical-align:top;}
+table.data tbody tr:nth-child(even){background:var(--bg-row-alt);}
+table.data td.num,table.data th.num{text-align:right;white-space:nowrap;}
+table.data td.center,table.data th.center{text-align:center;}
+table.data .top b{color:var(--red);}
+table.data tr.total td{font-weight:700;background:var(--bg-total);border-top:2px solid var(--teal);}
+table.data tr.total td .money{color:var(--red);}
+.dash{color:var(--gray-en);}
+.req{color:var(--red);font-weight:700;}
+.opt{color:var(--gray-en);}
+
+/* ============================ ⑩ BẢNG NÉN + CHÚ THÍCH BẢNG ============================ */
+.tbl-note{font-size:9pt;}
+table.cmp{font-size:8pt;}
+table.cmp thead th{padding:6px 7px;}
+table.cmp tbody td{padding:3.5px 7px;}
+table.cmp .stt{width:30px;text-align:right;color:var(--gray);}
+
+/* ============================ ⑪ CALLOUT ============================ */
+.callout{border-radius:var(--radius);padding:12px 16px;margin-bottom:var(--gap);
+         border-left:5px solid;font-size:9.5pt;}
+.callout .ct{display:block;font-weight:700;color:var(--navy);margin-bottom:4px;font-size:10pt;}
+.callout.warn{background:var(--bg-warn);border-left-color:var(--amber);}
+.callout.info{background:var(--bg-info);border-left-color:var(--teal);}
+.callout.ok  {background:var(--bg-ok);  border-left-color:var(--green);}
+.callout ol{margin:6px 0 0 0;padding-left:0;list-style:none;counter-reset:q;}
+.callout ol li{position:relative;padding-left:26px;margin-bottom:10px;counter-increment:q;}
+.callout ol li::before{content:"Q"counter(q);position:absolute;left:0;top:0;
+  color:var(--amber);font-weight:800;font-size:9pt;}
+.callout ol li:last-child{margin-bottom:0;}
+
+/* ============================ ⑫ KHỐI CHỮ KÝ ============================ */
+.signs{display:flex;justify-content:space-around;text-align:center;margin-top:30px;gap:40px;}
+.signs .col{flex:1;}
+.signs .role{font-weight:700;color:var(--navy);font-size:10.5pt;}
+.signs .role i{display:block;font-weight:400;font-style:italic;color:var(--gray-en);font-size:8pt;}
+.signs .name{margin-top:64px;font-weight:700;color:var(--navy);}
+.signs .name i{display:block;font-weight:400;font-style:normal;color:var(--gray);font-size:9pt;}
+
+/* ============================ TIỆN ÍCH ============================ */
+.t-left  {text-align:left;}
+.t-center{text-align:center;}
+.t-right {text-align:right;}
+.tag{display:inline-block;font-size:7.5pt;font-weight:700;padding:1px 7px;border-radius:10px;
+     color:#fff;letter-spacing:.3px;vertical-align:middle;}
+.tag.wait{background:var(--amber);}
+.tag.ok{background:var(--green);}
+.tag.cancel{background:var(--red);}
+</style>
+</head><body>
+
+<!-- ════════════════ TRANG 1 — BÌA + MỤC ĐÍCH + PHẦN I ════════════════ -->
+<div class="page">
+  <div class="rh">
+    <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"></path>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"></path>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"></polygon>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"></path>
+</g></g></svg></div>
+    <div class="rh-meta"><b>TÀI LIỆU BRD</b><i>BUSINESS REQUIREMENTS DOCUMENT</i>
+      Mã: BRD-PYC-2026<br>Phiên bản: v1.0</div>
+  </div>
+
+  <h1 class="doc-title">XÁC NHẬN YÊU CẦU NGHIỆP VỤ<br>MODULE TẠO PHIẾU YÊU CẦU (PYC)</h1>
+  <p class="doc-subtitle">Tài liệu Dev lập để chốt lại quy trình tiếp nhận · nhập liệu · xử lý Phiếu Yêu Cầu với Team Thu mua &amp; Quản lý thu mua</p>
+
+  <table class="meta">
+    <tbody>
+      <tr><td class="k"><b>Mã tài liệu</b><i>Document ID</i></td><td class="v">BRD-PYC-2026</td>
+          <td class="k"><b>Phiên bản</b><i>Version</i></td><td class="v">v1.0 — Bản nháp xác nhận</td></tr>
+      <tr><td class="k"><b>Module</b><i>Scope</i></td><td class="v">Tạo Phiếu Yêu Cầu (PYC)</td>
+          <td class="k"><b>Ngày lập</b><i>Issued</i></td><td class="v">27/06/2026</td></tr>
+      <tr><td class="k"><b>Bên lập</b><i>Prepared by</i></td><td class="v">Team Phát triển (Dev)</td>
+          <td class="k"><b>Bên xác nhận</b><i>Reviewed by</i></td><td class="v">Team Thu mua &amp; Quản lý thu mua</td></tr>
+      <tr><td class="k"><b>Trạng thái</b><i>Status</i></td><td class="v">Chờ Thu mua &amp; Quản lý thu mua phản hồi</td>
+          <td class="k"><b>Form in liên quan</b><i>Print form</i></td><td class="v">Mẫu 003/BM/PKT</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout info"><span class="ct">Mục đích tài liệu</span>
+    Tài liệu này được <strong>Dev</strong> lập nhằm xác nhận lại với <strong>Team Thu mua</strong> xem quy trình
+    tiếp nhận, nhập liệu và xử lý Phiếu Yêu Cầu (PYC) đã được hiểu đúng <span class="fig">100%</span> so với
+    thực tế vận hành hay chưa. Vui lòng đọc kỹ và phản hồi các câu hỏi ở <strong>Phần IV</strong>.</div>
+
+  <div class="part-label">PHẦN&nbsp;I</div>
+  <div class="section"><div class="num">I</div>
+    <div class="bar"><b>QUY TRÌNH TIẾP NHẬN &amp; XÁC NHẬN YÊU CẦU</b><span>From Zalo / Images</span></div></div>
+
+  <p class="lead">Theo cách hiểu của Dev, yêu cầu mua hàng hiện tại thường phát sinh qua các kênh
+  <strong>không chính thức</strong> (tin nhắn Zalo, hình ảnh chụp…). Quy trình xử lý của Thu mua diễn ra như sau:</p>
+
+  <h2 class="h3">1. Diễn giải các bước quy trình</h2>
+  
+  <p><strong>Bước 1: Khởi tạo yêu cầu (Phòng ban Yêu cầu)</strong><br/>
+  Người yêu cầu (nhân sự các phòng ban) phát sinh nhu cầu mua sắm vật tư, trang thiết bị. Họ sẽ chủ động liên hệ với bộ phận Thu mua qua <strong>Zalo</strong> (nhắn tin cá nhân hoặc group). Thông tin cung cấp ban đầu thường là: tên sản phẩm, số lượng ước tính, mục đích sử dụng, hoặc đơn giản là một bức hình chụp sản phẩm/thiết bị bị hỏng cần thay thế.</p>
+
+  <p><strong>Bước 2: Phản hồi và Làm rõ thông tin (Thu Mua)</strong></p>
+  <ul>
+    <li>Chuyên viên Thu mua tiếp nhận tin nhắn, sau đó chủ động đặt câu hỏi phản hồi để <strong>làm rõ và chuẩn hóa</strong> các yêu cầu chưa rõ ràng.</li>
+    <li>Các thông tin bắt buộc phải chốt được bao gồm: <em>Thông số kỹ thuật chính xác, số lượng cụ thể, hạn chót bắt buộc phải có hàng (deadline), đơn vị/chi nhánh chịu chi phí, và báo giá dự kiến (nếu có).</em></li>
+    <li>Hai bên xác nhận lại toàn bộ thông tin lần cuối thông qua tin nhắn Zalo, đây được xem là <strong>bằng chứng tiền đề</strong> cho việc tạo phiếu.</li>
+  </ul>
+
+  <p><strong>Bước 3: Số hóa và Tạo Phiếu Yêu Cầu trên Phần Mềm (Thu Mua)</strong></p>
+  <ul>
+    <li>Sau khi thông tin đã chốt hạ, chuyên viên Thu mua đăng nhập vào <strong>Hệ thống quản lý nội bộ (App)</strong>.</li>
+    <li>Tại giao diện Dashboard, chọn chức năng <strong>"Tạo Yêu cầu" (Intake Form)</strong>.</li>
+    <li>Thu mua sẽ <strong>nhập liệu thủ công</strong> toàn bộ dữ liệu đã thống nhất từ Zalo vào các trường thông tin số hóa (Người yêu cầu, Tên hàng, ĐVT, Số lượng, Mục đích...).</li>
+    <li><strong>Đính kèm chứng từ:</strong> Thu mua bắt buộc phải tải lên (upload) các hình ảnh sản phẩm, ảnh chụp màn hình đoạn chat xác nhận trên Zalo, hoặc file báo giá PDF của nhà cung cấp. Điều này giúp minh bạch hóa hồ sơ để trình lên cấp quản lý.</li>
+  </ul>
+
+  <div class="rf">
+    <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+      <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 1</span></div>
+    <div class="rf-sub">BRD Module Tạo Phiếu Yêu Cầu (PYC) · Phiên bản v1.0 · 27/06/2026</div>
+  </div>
+</div>
+
+<!-- ════════════════ TRANG 2 — PHẦN I (LƯU ĐỒ) ════════════════ -->
+<div class="page">
+  <div class="rh">
+    <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"></path>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"></path>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"></polygon>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"></path>
+</g></g></svg></div>
+    <div class="rh-meta"><b>TÀI LIỆU BRD</b><i>BUSINESS REQUIREMENTS DOCUMENT</i>
+      Mã: BRD-PYC-2026<br>Phiên bản: v1.0</div>
+  </div>
+
+  <h2 class="h3">2. Lưu đồ quy trình tổng quát</h2>
+  <div class="mermaid" style="text-align: center; margin: 15px 0;">
+  sequenceDiagram
+      autonumber
+      participant YC as 1. Người Yêu Cầu
+      participant TM as 2. Thu Mua
+      participant QL as 3. Quản lý thu mua
+      participant HT as 4. Hệ Thống (App)
+
+      Note over YC,TM: Bắt đầu quy trình
+      YC->>TM: Nhắn tin Zalo / Gửi Hình ảnh
+      TM-->>YC: Phản hồi, Làm rõ & Chốt thông tin
+      
+      Note over TM: Đăng nhập phần mềm
+      Note over TM: Nhập liệu & Tạo PYC
+      
+      TM->>QL: Trình duyệt PYC
+      Note over HT: ⏳ TRẠNG THÁI: CHỜ DUYỆT
+      
+      alt Hợp lệ (Đồng ý)
+          QL->>HT: Duyệt phiếu
+          Note over HT: ✅ TRẠNG THÁI: ĐÃ DUYỆT
+          HT-->>TM: Hệ thống báo duyệt thành công
+          Note over TM: In Phiếu & Tiến hành Đặt hàng
+      else Không hợp lệ (Từ chối)
+          QL->>HT: Từ chối phiếu
+          Note over HT: ❌ TRẠNG THÁI: ĐÃ HỦY
+          HT-->>YC: Thông báo hủy yêu cầu
+      end
+  </div>
+
+  <div class="rf">
+    <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+      <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 2</span></div>
+    <div class="rf-sub">BRD Module Tạo Phiếu Yêu Cầu (PYC) · Phiên bản v1.0 · 27/06/2026</div>
+  </div>
+</div>
+
+<!-- ════════════════ TRANG 3 — PHẦN I (TIẾP THEO) ════════════════ -->
+<div class="page">
+  <div class="rh">
+    <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"></path>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"></path>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"></polygon>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"></path>
+</g></g></svg></div>
+    <div class="rh-meta"><b>TÀI LIỆU BRD</b><i>BUSINESS REQUIREMENTS DOCUMENT</i>
+      Mã: BRD-PYC-2026<br>Phiên bản: v1.0</div>
+  </div>
+
+  <h2 class="h3">3. Bảng mô tả thao tác theo vai trò</h2>
+  <p class="tbl-note">Dưới đây là chi tiết các thao tác của từng cá nhân/bộ phận tương ứng với từng bước trong quy trình.</p>
+
+  <table class="data">
+    <thead>
+      <tr><th colspan="2" style="background:var(--teal-dark);">Bảng 1: Thao tác của Người Yêu Cầu (NSYC)</th></tr>
+      <tr><th style="width:25%">Bước trong quy trình</th><th>Thao tác của NSYC</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Bước 1: Khởi tạo</b></td><td>Gửi yêu cầu mua hàng thông qua nhắn tin, gửi hình ảnh sản phẩm cần mua hoặc thay thế qua Zalo.</td></tr>
+      <tr><td><b>Bước 2: Làm rõ thông tin</b></td><td>Phản hồi, trả lời các câu hỏi của Thu mua để làm rõ thông tin về số lượng, quy cách, hạn chót.</td></tr>
+      <tr><td><b>Bước 3 & sau duyệt: Theo dõi</b></td><td>Xem mẫu Phiếu Yêu Cầu điện tử (hoặc nhận thông báo) để theo dõi tiến độ xử lý yêu cầu mua hàng của mình.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="data">
+    <thead>
+      <tr><th colspan="2" style="background:var(--teal-dark);">Bảng 2: Thao tác của Bộ phận Thu Mua</th></tr>
+      <tr><th style="width:25%">Bước trong quy trình</th><th>Thao tác của Thu Mua</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Bước 1 & 2: Tiếp nhận & Làm rõ</b></td><td>Nhận tin nhắn yêu cầu; Chủ động đặt câu hỏi khai thác thông tin; Chốt thông số, thời gian và giá dự kiến với NSYC.</td></tr>
+      <tr><td><b>Bước 3: Nhập liệu & Tạo PYC</b></td><td>Đăng nhập phần mềm, nhập thông tin đã chốt từ Zalo vào form PYC. Tải lên hình ảnh sản phẩm, ảnh chat Zalo, báo giá làm bằng chứng.</td></tr>
+      <tr><td><b>Bước sau duyệt: Xử lý</b></td><td>Nhận thông báo duyệt từ Quản lý, tiến hành in phiếu (nếu cần), lên Đơn đặt hàng (PO) và liên hệ Nhà cung cấp.</td></tr>
+    </tbody>
+  </table>
+
+  <table class="data">
+    <thead>
+      <tr><th colspan="2" style="background:var(--teal-dark);">Bảng 3: Thao tác của Admin / Quản lý thu mua</th></tr>
+      <tr><th style="width:25%">Bước trong quy trình</th><th>Thao tác của Admin / Quản lý thu mua</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Bước kiểm tra hồ sơ</b></td><td>Nhận thông báo có PYC chờ duyệt. Đăng nhập hệ thống, rà soát nội dung phiếu và đối chiếu với file đính kèm.</td></tr>
+      <tr><td><b>Bước ra quyết định</b></td><td>Thực hiện "Duyệt phiếu" (hợp lệ) hoặc "Từ chối" (không hợp lệ, bắt buộc nhập lý do hủy) trên hệ thống.</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-note req" style="margin-top:-8px; margin-bottom:15px;">* Note: Nghiệp vụ của Admin thu mua tương tự với Quản lý thu mua ở bước này.</p>
+
+  <div class="rf">
+    <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+      <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 3</span></div>
+    <div class="rf-sub">BRD Module Tạo Phiếu Yêu Cầu (PYC) · Phiên bản v1.0 · 27/06/2026</div>
+  </div>
+</div>
+
+<!-- ════════════════ TRANG 3 — PHẦN II (A + B) ════════════════ -->
+<div class="page">
+  <div class="rh">
+    <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"></path>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"></path>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"></polygon>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"></path>
+</g></g></svg></div>
+    <div class="rh-meta"><b>TÀI LIỆU BRD</b><i>BUSINESS REQUIREMENTS DOCUMENT</i>
+      Mã: BRD-PYC-2026<br>Phiên bản: v1.0</div>
+  </div>
+
+  <div class="part-label">PHẦN&nbsp;II</div>
+  <div class="section"><div class="num">II</div>
+    <div class="bar"><b>CHI TIẾT CÁC TRƯỜNG DỮ LIỆU TRÊN FORM</b><span>PYC Form Fields</span></div></div>
+
+  <p class="lead">Dưới đây là chi tiết các thông tin Dev đã thiết kế trên form tạo PYC. Team Thu mua vui lòng rà soát:
+  <strong>nhập dữ liệu từ đâu</strong>, có <strong>thiếu trường nào không</strong>, và <strong>có bắt buộc nhập không</strong>.
+  Cột "Bắt buộc?": <span class="req">Có</span> = bắt buộc · <span class="opt">Không</span> = tùy chọn.</p>
+
+  <h2 class="h3">A. Thông tin chung của phiếu</h2>
+  <table class="data">
+    <thead><tr>
+      <th style="width:20%">Trường trên Form</th>
+      <th class="center" style="width:10%">Bắt buộc?</th>
+      <th style="width:35%">Dữ liệu nhập / Nguồn lấy</th>
+      <th>Mục đích &amp; xử lý bước sau</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><b>Mã phiếu yêu cầu</b></td><td class="center"><span class="opt">Không</span></td>
+        <td>Tự động sinh (VD: <span class="fig">PYC-123</span>) nếu để trống. Có thể tự gõ nếu muốn mã riêng.</td>
+        <td>Dùng để tra cứu, in ấn, tìm kiếm sau này.</td></tr>
+      <tr><td><b>Ngày tiếp nhận</b></td><td class="center"><span class="req">Có</span></td>
+        <td>Lịch chọn ngày (mặc định hôm nay).</td>
+        <td>Ghi nhận thời điểm Thu mua bắt đầu xử lý để đo <strong>SLA</strong> (thời gian xử lý).</td></tr>
+      <tr><td><b>Công ty (Đơn vị)</b></td><td class="center"><span class="req">Có</span></td>
+        <td>Chọn từ danh sách (Dropdown). VD: Dego Holding.</td>
+        <td>Phục vụ Kế toán phân bổ chi phí về đúng pháp nhân/chi nhánh.</td></tr>
+      <tr><td><b>Nhân sự YC</b></td><td class="center"><span class="req">Có</span></td>
+        <td>Chọn từ danh sách nhân viên. Lấy theo người nhắn tin Zalo.</td>
+        <td>Lưu người trực tiếp yêu cầu để liên hệ khi giao hàng.</td></tr>
+      <tr><td><b>Bộ phận YC</b></td><td class="center"><span class="req">Có</span></td>
+        <td>Nhập text (hệ thống tự điền theo Nhân sự đã chọn).</td>
+        <td>Xác định phòng ban chịu chi phí.</td></tr>
+      <tr><td><b>Chức vụ</b></td><td class="center"><span class="opt">Không</span></td>
+        <td>Nhập text.</td>
+        <td>Bổ sung thông tin cho form in PDF.</td></tr>
+      <tr><td><b>TBP / Người liên hệ</b></td><td class="center"><span class="req">Có</span></td>
+        <td>Nhập text (hệ thống tự điền theo Nhân sự).</td>
+        <td>Xác định người quản lý trực tiếp sẽ duyệt hoặc chịu trách nhiệm cho yêu cầu.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="h3">B. Nội dung cần mua &amp; thời gian</h2>
+  <table class="data">
+    <thead><tr>
+      <th style="width:20%">Trường trên Form</th>
+      <th class="center" style="width:10%">Bắt buộc?</th>
+      <th style="width:35%">Dữ liệu nhập / Nguồn lấy</th>
+      <th>Mục đích &amp; xử lý bước sau</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><b>Mục đích mua hàng</b></td><td class="center"><span class="req">Có</span></td>
+        <td>Đoạn văn (Text Area). Lấy từ Zalo.</td>
+        <td>Trình bày lý do xin mua để Quản lý thu mua có cơ sở phê duyệt.</td></tr>
+      <tr><td><b>Thời gian cần hàng</b></td><td class="center"><span class="opt">Không</span></td>
+        <td>Lịch chọn ngày (Deadline).</td>
+        <td>Báo cho Thu mua mức độ gấp của đơn hàng để ưu tiên.</td></tr>
+      <tr><td><b>Nội dung mua hàng</b></td><td class="center"><span class="opt">Không</span></td>
+        <td>Đoạn văn (Text Area).</td>
+        <td>Ghi chú chung, tóm tắt các yêu cầu đặc biệt.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rf">
+    <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+      <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 4</span></div>
+    <div class="rf-sub">BRD Module Tạo Phiếu Yêu Cầu (PYC) · Phiên bản v1.0 · 27/06/2026</div>
+  </div>
+</div>
+
+<!-- ════════════════ TRANG 4 — PHẦN II (C + D) ════════════════ -->
+<div class="page">
+  <div class="rh">
+    <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"></path>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"></path>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"></polygon>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"></path>
+</g></g></svg></div>
+    <div class="rh-meta"><b>TÀI LIỆU BRD</b><i>BUSINESS REQUIREMENTS DOCUMENT</i>
+      Mã: BRD-PYC-2026<br>Phiên bản: v1.0</div>
+  </div>
+
+  <h2 class="h3">C. Danh sách sản phẩm / hàng hóa chi tiết</h2>
+  <p class="tbl-note">Nhập <strong>nhiều dòng</strong> cho nhiều sản phẩm trong cùng một PYC. Cột "Thành tiền" do hệ thống tự tính, không nhập tay.</p>
+  <table class="data">
+    <thead><tr>
+      <th style="width:20%">Trường trên Form</th>
+      <th class="center" style="width:10%">Bắt buộc?</th>
+      <th style="width:35%">Dữ liệu nhập / Nguồn lấy</th>
+      <th>Mục đích &amp; xử lý bước sau</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><b>Mã hàng</b></td><td class="center"><span class="opt">Không</span></td>
+        <td>Nhập text (mã nội bộ nếu có).</td>
+        <td>Để map với phần mềm Kế toán/Kho sau này.</td></tr>
+      <tr><td><b>Tên sản phẩm</b></td><td class="center"><span class="req">Có</span></td>
+        <td>Nhập text. Ghi chính xác tên hàng theo ảnh chụp/Zalo.</td>
+        <td>Thông tin <strong>quan trọng nhất</strong> để đi tìm nhà cung cấp.</td></tr>
+      <tr><td><b>Đơn vị tính (ĐVT)</b></td><td class="center"><span class="req">Có</span></td>
+        <td>Nhập text (Cái, Lốc, Hộp, Kg…).</td>
+        <td>Ràng buộc số lượng đặt hàng.</td></tr>
+      <tr><td><b>Số lượng</b></td><td class="center"><span class="req">Có</span></td>
+        <td>Nhập số. Dựa trên số liệu đã chốt qua Zalo.</td>
+        <td>Cơ sở tính tổng tiền và lên Đơn hàng (PO) sau này.</td></tr>
+      <tr><td><b>Đơn giá</b></td><td class="center"><span class="opt">Không</span></td>
+        <td>Nhập số. Nguồn: giá Thu mua tự ước lượng hoặc giá của NCC.</td>
+        <td>Khái toán chi phí dự kiến cho PYC.</td></tr>
+      <tr><td><b>Thành tiền</b></td><td class="center"><span class="dash">—</span></td>
+        <td><strong>Tự động tính:</strong> = Số lượng × Đơn giá.</td>
+        <td>Thể hiện tổng ngân sách dự kiến của từng dòng và toàn phiếu.</td></tr>
+      <tr><td><b>Ghi chú</b></td><td class="center"><span class="opt">Không</span></td>
+        <td>Nhập text.</td>
+        <td>Quy cách kỹ thuật, màu sắc, size… lấy từ Zalo/hình ảnh.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="h3">D. Thông tin nhà cung cấp đề xuất &amp; file đính kèm</h2>
+  <table class="data">
+    <thead><tr>
+      <th style="width:24%">Trường trên Form</th>
+      <th class="center" style="width:10%">Bắt buộc?</th>
+      <th style="width:33%">Dữ liệu nhập / Nguồn lấy</th>
+      <th>Mục đích &amp; xử lý bước sau</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><b>NCC đề xuất</b></td><td class="center"><span class="opt">Không</span></td>
+        <td>Nhập tên NCC (có thể người YC gợi ý sẵn trên Zalo).</td>
+        <td>Tham khảo nguồn mua cho Thu mua.</td></tr>
+      <tr><td><b>MST &amp; Liên hệ NCC</b></td><td class="center"><span class="opt">Không</span></td>
+        <td>Mã số thuế, SĐT, Email của NCC.</td>
+        <td>Tiện cho việc xuất hóa đơn và liên lạc.</td></tr>
+      <tr><td><b>File đính kèm</b><br><span class="opt" style="font-size:8pt">(Báo giá, Hình Zalo)</span></td><td class="center"><span class="opt">Không</span></td>
+        <td>Upload File (Ảnh, PDF).</td>
+        <td>Nơi lưu trữ hình ảnh vật tư, ảnh chụp tin nhắn chốt Zalo, báo giá.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn"><span class="ct">Cần Thu mua rà soát</span>
+    Vui lòng đánh dấu trực tiếp lên bảng A–D ở trên: trường nào <strong>thừa</strong>, trường nào <strong>thiếu</strong>,
+    và trường nào cần đổi trạng thái bắt buộc/tùy chọn so với thực tế đang vận hành.</div>
+
+  <div class="rf">
+    <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+      <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 5</span></div>
+    <div class="rf-sub">BRD Module Tạo Phiếu Yêu Cầu (PYC) · Phiên bản v1.0 · 27/06/2026</div>
+  </div>
+</div>
+
+<!-- ════════════════ TRANG 5 — PHẦN III + PHẦN IV + CHỮ KÝ ════════════════ -->
+<div class="page">
+  <div class="rh">
+    <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"></path>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"></path>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"></polygon>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"></path>
+</g></g></svg></div>
+    <div class="rh-meta"><b>TÀI LIỆU BRD</b><i>BUSINESS REQUIREMENTS DOCUMENT</i>
+      Mã: BRD-PYC-2026<br>Phiên bản: v1.0</div>
+  </div>
+
+  <div class="part-label">PHẦN&nbsp;III</div>
+  <div class="section"><div class="num">III</div>
+    <div class="bar"><b>QUY TRÌNH XỬ LÝ (WORKFLOW) SAU KHI LƯU PYC</b><span>Post-save Workflow</span></div></div>
+
+  <ol class="steps">
+    <li><strong>Trình duyệt PYC lên Hệ thống:</strong> Sau khi hoàn tất nhập liệu, Thu mua nhấn nút <strong>Lưu &amp; Gửi</strong>. Hệ thống tự động sinh Mã PYC (VD: PYC-001) và chuyển trạng thái phiếu thành <span class="tag wait">Chờ duyệt</span>. Lịch sử hệ thống ghi nhận chính xác thời gian tạo và nhân sự thực hiện.</li>
+    <li><strong>Kiểm tra &amp; Phê duyệt (Quản lý thu mua):</strong> Cấp Quản lý thu mua nhận được thông báo, tiến hành đăng nhập vào hệ thống. Quản lý sẽ rà soát nội dung phiếu mua hàng, đối chiếu chéo với các <strong>file ảnh chụp màn hình Zalo / Báo giá đính kèm</strong> để xác minh tính hợp lý về giá cả và ngân sách.</li>
+    <li><strong>Xử lý Kết quả Duyệt:</strong>
+      <ul>
+        <li><strong>Đồng ý:</strong> Quản lý nhấn <strong>"Duyệt phiếu"</strong>. Hệ thống tự động chuyển trạng thái thành <span class="tag ok">Đã duyệt</span>, đồng thời gửi thông báo xác nhận về cho Thu mua để chuẩn bị tiến hành lên Đơn Hàng (PO) và liên hệ Nhà cung cấp.</li>
+        <li><strong>Từ chối:</strong> Nếu phát hiện sai sót hoặc ngân sách không cho phép, Quản lý nhấn <strong>"Từ chối"</strong>. Hệ thống yêu cầu <strong>bắt buộc nhập "Lý do hủy"</strong>. Trạng thái phiếu thành <span class="tag cancel">Đã hủy</span>, thông báo này sẽ được chuyển ngược về cho Thu mua và Người yêu cầu ban đầu để nắm bắt tình hình.</li>
+      </ul>
+    </li>
+    <li><strong>Xuất bản In (Tùy chọn):</strong> Đối với các quy trình kiểm toán nội bộ khắt khe cần chữ ký tươi, chuyên viên Thu mua hoặc Quản lý có thể nhấn nút <strong>"In phiếu"</strong>. Hệ thống sẽ xuất ra file PDF dàn trang chuẩn theo <strong>Mẫu 003/BM/PKT</strong> để các bên ký nhận thực tế.</li>
+  </ol>
+
+  <div class="part-label">PHẦN&nbsp;IV</div>
+  <div class="section"><div class="num">IV</div>
+    <div class="bar"><b>CÁC CÂU HỎI MỞ CẦN XÁC NHẬN</b><span>Open Questions — Thu mua &amp; Quản lý thu mua</span></div></div>
+
+  <div class="callout warn"><span class="ct">Vui lòng trả lời để Dev hoàn thiện tính năng chuẩn nhất</span>
+    <ol>
+      <li><strong>Về luồng Zalo:</strong> Thu mua chỉ cần <strong>tự nhập tay</strong> thông tin từ Zalo sang tool
+      (kèm upload ảnh Zalo làm bằng chứng), hay muốn có một <strong>Zalo Bot</strong> tự động tạo nháp PYC khi
+      người dùng nhắn vào group? <em>(Hiện Dev đang làm phương án 1: nhập tay + upload file.)</em></li>
+      <li><strong>Về cấp duyệt:</strong> Hiện tool có 1 nút "Duyệt phiếu" chung. Thực tế công ty có cần chia
+      <strong>nhiều cấp duyệt</strong> không? (VD: TBP duyệt → Quản lý thu mua duyệt → Giám đốc duyệt.)</li>
+      <li><strong>Về file đính kèm:</strong> Có cần tách riêng các nút "Upload Hình sản phẩm", "Upload Ảnh chat Zalo",
+      "Upload Báo giá PDF" không, hay chỉ cần <strong>1 nút "File đính kèm" chung</strong> là đủ?</li>
+      <li><strong>Độ ưu tiên:</strong> Có cần bổ sung trường <strong>"Mức độ ưu tiên"</strong>
+      (Bình thường / Gấp / Rất gấp) để Thu mua dễ lọc dữ liệu không?</li>
+      <li><strong>Khóa dữ liệu:</strong> Sau khi phiếu sang "Đã duyệt", hệ thống sẽ <strong>khóa hoàn toàn không cho sửa</strong>,
+      đúng hay sai? (Nếu cần sửa thì phải hủy làm lại.)</li>
+    </ol>
+  </div>
+
+  <div class="signs">
+    <div class="col"><div class="role">NGƯỜI LẬP<i>Prepared by · Dev</i></div><div class="name">&nbsp;<i>Team Phát triển</i></div></div>
+    <div class="col"><div class="role">BÊN XÁC NHẬN<i>Confirmed by</i></div><div class="name">&nbsp;<i>Team Thu mua &amp; Quản lý thu mua</i></div></div>
+  </div>
+
+  <div class="rf">
+    <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+      <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 6</span></div>
+    <div class="rf-sub">BRD Module Tạo Phiếu Yêu Cầu (PYC) · Phiên bản v1.0 · 27/06/2026</div>
+  </div>
+</div>
+
+<!-- ════════════════ TRANG 6 — PHỤ LỤC: MẪU PHIẾU YÊU CẦU ════════════════ -->
+<div class="page">
+  <div class="rh">
+    <div class="logo"><svg viewBox="0 0 141.8 56.5" xmlns="http://www.w3.org/2000/svg" aria-label="DEGO Holding">
+<style>.st0{fill:#92C83E}.st1{fill:#00AEEF}.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#00AEEF}</style>
+<g><g>
+<path class="st0" d="M115,22.7c0.5,1.5,1.5,2.4,2.9,2.7l9.3,0c1.6-0.2,2.7-0.9,3.3-2.2c0.8-0.9,1.3-3.1,1.6-6.5c0.3-3.5,0.1-5.7-0.7-6.6c-0.7-1-1.9-1.6-3.5-1.7h-7.2c-2.1,0.2-3.6,1.2-4.4,3c-0.6,0.9-1,2.8-1.4,5.8C114.7,20.3,114.7,22.1,115,22.7 M130.5,34.3h-15.8c-7,0-10-5.6-8.8-17C107,5.8,111.3,0.1,118.7,0l13,0c7.8-0.1,11.1,5.4,9.8,16.6C141,28.3,137.3,34.2,130.5,34.3z M9.4,25.4l13,0c1.4-0.2,2.4-0.9,3-2.3c0.8-1.2,1.3-3.2,1.6-5.9c0.3-2.7,0.1-4.9-0.7-6.7c-0.5-1.1-1.5-1.7-3-1.8H11.1L9.4,25.4z M3.3,0.6l22.7,0c7.2,0.4,10.3,6,9.2,16.6c-1.1,10.7-5,16.2-11.8,16.6L0,33.9L3.3,0.6z"></path>
+<path class="st1" d="M103.2,33.8H79.6c-6.8-0.4-9.6-6-8.6-16.7c1-10.7,5.2-16.3,12.5-16.6l22.9,0l-0.9,8.1H85.4c-1.5,0-2.6,0.6-3.3,1.6c-1.6,4.1-2.3,8.3-1.9,12.4c0.2,1.3,1,2.2,2.4,2.5l12.7,0l1-9.7l8.7,0L103.2,33.8z M68.1,33.8H44.6c-6.7-0.4-9.6-6-8.5-16.7c1-10.7,5.2-16.3,12.5-16.6h22.8l-0.8,8.1l-20.2,0C48.7,8.6,47.6,9,47.3,10l-0.8,2.9l23.7,0l-0.9,8l-23.6-0.1l0,1.9c0.1,1.6,0.6,2.4,1.7,2.6l21.4,0L68.1,33.8z"></path>
+<polygon class="st2" points="0.2,36.8 140,36.8 139.7,39 0,39"></polygon>
+<path class="st1" d="M137.7,56.3h-9.4c-2.7-0.2-3.9-2.4-3.4-6.7c0.4-4.3,2.1-6.5,5-6.7l9.2,0l-0.3,3.3h-8.1c-0.6,0-1.1,0.2-1.3,0.6c-0.6,1.7-0.9,3.3-0.8,5c0.1,0.5,0.4,0.9,1,1l5.1,0l0.4-3.9l3.5,0L137.7,56.3z M107.9,56.4l1.3-13.5h9.1c2.6-0.1,3.9,1.4,3.7,4.3l-0.9,9.2h-3.6l0.9-8.4c0.2-0.9-0.2-1.3-1-1.2h-5l-1,9.6H107.9z M102,42.9h3.9l-1.3,13.4h-4L102,42.9z M87.8,52.9l5.2,0c0.6-0.1,1-0.4,1.2-0.9c0.3-0.5,0.5-1.3,0.6-2.3c0.1-1.1,0-2-0.3-2.7c-0.2-0.5-0.6-0.7-1.2-0.7h-4.9L87.8,52.9z M85.3,43l9.1,0c2.9,0.2,4.1,2.4,3.7,6.7c-0.4,4.3-2,6.5-4.8,6.7l-9.4,0L85.3,43z M72.9,42.9L72,51.2c0,0.8,0.4,1.2,1.2,1.3l8.1,0L81,56.3h-9.2c-2.9-0.1-4.2-1.8-3.8-5l0.9-8.4H72.9z M54.5,51.8c0.2,0.6,0.6,1,1.2,1.1l3.7,0c0.6-0.1,1.1-0.3,1.3-0.9c0.3-0.4,0.5-1.2,0.6-2.6c0.1-1.4,0-2.2-0.3-2.6c-0.3-0.4-0.8-0.6-1.4-0.7h-2.8c-0.8,0.1-1.4,0.5-1.7,1.2c-0.2,0.3-0.4,1.1-0.5,2.3C54.4,50.9,54.4,51.6,54.5,51.8z M60.7,56.5h-6.3c-2.8,0-4-2.3-3.5-6.8c0.4-4.6,2.2-6.9,5.1-6.9l5.2,0c3.1-0.1,4.4,2.2,3.9,6.7C64.9,54.1,63.4,56.4,60.7,56.5z M35.4,42.9h4l-0.5,5l5,0l0.5-5l4,0L47,56.3l-4,0l0.5-5.2h-5L38,56.3h-4L35.4,42.9z"></path>
+</g></g></svg></div>
+    <div class="rh-meta"><b>TÀI LIỆU BRD</b><i>BUSINESS REQUIREMENTS DOCUMENT</i>
+      Mã: BRD-PYC-2026<br>Phiên bản: v1.0</div>
+  </div>
+
+  <div class="part-label">PHỤ LỤC</div>
+  <div class="section"><div class="num">V</div>
+    <div class="bar"><b>HÌNH ẢNH MẪU PHIẾU YÊU CẦU</b><span>Sample PYC Form</span></div></div>
+
+  <div style="text-align: center; margin-top: 15px;">
+    <img src="mau_phieu_yeu_cau.png" alt="Mẫu phiếu yêu cầu" style="max-width: 100%; max-height: 220mm; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 4px 12px rgba(0,0,0,0.1); object-fit: contain;" />
+  </div>
+
+  <div class="rf">
+    <div class="rf-row"><span class="l">DEGO HOLDING · Cần Thơ, Việt Nam</span>
+      <span class="c">Tài liệu nội bộ · Lưu hành hạn chế</span><span class="r">Trang 6</span></div>
+    <div class="rf-sub">BRD Module Tạo Phiếu Yêu Cầu (PYC) · Phiên bản v1.0 · 27/06/2026</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, securityLevel: 'loose', theme: 'base', themeVariables: { primaryColor: '#E8F3F8', primaryBorderColor: '#1E7F9C', primaryTextColor: '#1F2937', lineColor: '#1A5FB4', fontFamily: 'Inter' }});</script>
+
+</body>
+</html>
