@@ -47,8 +47,8 @@ const Login = ({ onLogin }) => {
       const payload = JSON.parse(jsonPayload);
       
       message.success(`Đăng nhập Google thành công: ${payload.name}`);
-      // Dùng email phần đầu làm username hoặc truyền nguyên email
-      onLogin(payload.email.split('@')[0]);
+      localStorage.setItem('googleEmail', payload.email);
+      onLogin(payload.name);
     } catch (e) {
       message.error("Đăng nhập Google thất bại!");
     }
@@ -56,6 +56,7 @@ const Login = ({ onLogin }) => {
 
   const handleManualLogin = (values) => {
     if (values.username === 'admin' && values.password === 'admin') {
+      localStorage.removeItem('googleEmail');
       message.success('Đăng nhập thành công!');
       onLogin('admin');
     } else {
@@ -66,6 +67,7 @@ const Login = ({ onLogin }) => {
   const handleQuickLogin = (roleName) => {
     setLoading(roleName);
     setTimeout(() => {
+      localStorage.removeItem('googleEmail');
       onLogin(roleName);
     }, 500);
   };

@@ -33,6 +33,9 @@ const Intake = () => {
   // State for dropdowns
   const [donviOptions, setDonviData] = useState([]);
   const [nhansuOptions, setNhansuData] = useState([]);
+  const [nccOptions, setNccData] = useState([]);
+  const googleEmail = localStorage.getItem('googleEmail');
+  const [googleNhanSu, setGoogleNhanSu] = useState(null);
 
   useEffect(() => {
     // Tải dữ liệu dropdown từ localStorage hoặc fallback sang default
@@ -43,6 +46,17 @@ const Intake = () => {
     const storedNhansu = localStorage.getItem('nhansuData');
     const parsedNhansu = storedNhansu && JSON.parse(storedNhansu).length > 0 ? JSON.parse(storedNhansu) : defaultNhanSu;
     setNhansuData(parsedNhansu.map(ns => ({ label: ns.name, value: ns.name })));
+
+    if (googleEmail) {
+      const match = parsedNhansu.find(ns => ns.email === googleEmail);
+      if (match) {
+        setGoogleNhanSu(match);
+      }
+    }
+
+    const storedNcc = localStorage.getItem('nccData');
+    const parsedNcc = storedNcc && JSON.parse(storedNcc).length > 0 ? JSON.parse(storedNcc) : defaultNcc;
+    setNccData(parsedNcc.map(ncc => ({ label: ncc.name, value: ncc.name, mst: ncc.mst })));
 
     const stored = localStorage.getItem('pycData');
     if (stored) {
@@ -71,8 +85,36 @@ const Intake = () => {
     setEditingRecord(null);
     setProducts([]);
     form.resetFields();
-    form.setFieldsValue({ ngaytn: dayjs(), showCode: true });
+    const defaultVals = { ngaytn: dayjs(), showCode: true };
+    if (googleNhanSu) {
+      defaultVals.nhansu = googleNhanSu.name;
+      defaultVals.bophan = googleNhanSu.dept;
+      defaultVals.tbp = googleNhanSu.manager;
+      defaultVals.chucvu = googleNhanSu.chucvu || '';
+    }
+    form.setFieldsValue(defaultVals);
     setIsModalOpen(true);
+  };
+
+  const handleNhanSuChange = (val) => {
+    const storedNhansu = localStorage.getItem('nhansuData');
+    const parsedNhansu = storedNhansu && JSON.parse(storedNhansu).length > 0 ? JSON.parse(storedNhansu) : defaultNhanSu;
+    const match = parsedNhansu.find(ns => ns.name === val);
+    if (match) {
+      form.setFieldsValue({
+        bophan: match.dept,
+        tbp: match.manager,
+        chucvu: match.chucvu || ''
+      });
+    }
+  };
+
+  const handleNccChange = (val, option) => {
+    if (option) {
+      form.setFieldsValue({
+        nccMst: option.mst || ''
+      });
+    }
   };
 
   const handleEdit = (record, index) => {
@@ -410,7 +452,7 @@ const Intake = () => {
 
           <Row gutter={16}>
             <Col span={12}><Form.Item name="donvi" label="Công ty" rules={[{ required: true }]}><Select options={donviOptions} placeholder="-- Chọn Công ty --" /></Form.Item></Col>
-            <Col span={12}><Form.Item name="nhansu" label="Nhân sự YC" rules={[{ required: true }]}><Select options={nhansuOptions} placeholder="-- Chọn Nhân sự --" /></Form.Item></Col>
+            <Col span={12}><Form.Item name="nhansu" label="Nhân sự YC" rules={[{ required: true }]}><Select options={nhansuOptions} placeholder="-- Chọn Nhân sự --" onChange={handleNhanSuChange} disabled={!!googleNhanSu} /></Form.Item></Col>
           </Row>
 
           <Row gutter={16}>
@@ -436,18 +478,34 @@ const Intake = () => {
               <Button type="dashed" size="small" icon={<Plus size={16} />} onClick={handleAddProduct}>Thêm SP</Button>
             </div>
             <Table columns={productColumns} dataSource={products} pagination={false} size="small" bordered 
-              summary={() => (
-                <Table.Summary.Row>
-                  <Table.Summary.Cell index={0} colSpan={5} align="right"><strong>Cộng:</strong></Table.Summary.Cell>
-                  <Table.Summary.Cell index={1} align="right"><strong>{totalProductAmount.toLocaleString()}</strong></Table.Summary.Cell>
-                  <Table.Summary.Cell index={2} colSpan={2}></Table.Summary.Cell>
-                </Table.Summary.Row>
-              )}
+              summary={() => {
+                const vat = totalProductAmount * 0.08;
+                const grandTotal = totalProductAmount + vat;
+                return (
+                  <>
+                    <Table.Summary.Row>
+                      <Table.Summary.Cell index={0} colSpan={5} align="right"><strong>Cộng:</strong></Table.Summary.Cell>
+                      <Table.Summary.Cell index={1} align="right"><strong>{totalProductAmount.toLocaleString()}</strong></Table.Summary.Cell>
+                      <Table.Summary.Cell index={2} colSpan={2}></Table.Summary.Cell>
+                    </Table.Summary.Row>
+                    <Table.Summary.Row>
+                      <Table.Summary.Cell index={0} colSpan={5} align="right"><strong>VAT (8%):</strong></Table.Summary.Cell>
+                      <Table.Summary.Cell index={1} align="right"><strong>{vat.toLocaleString()}</strong></Table.Summary.Cell>
+                      <Table.Summary.Cell index={2} colSpan={2}></Table.Summary.Cell>
+                    </Table.Summary.Row>
+                    <Table.Summary.Row>
+                      <Table.Summary.Cell index={0} colSpan={5} align="right"><strong>Tổng cộng thanh toán:</strong></Table.Summary.Cell>
+                      <Table.Summary.Cell index={1} align="right"><strong>{grandTotal.toLocaleString()}</strong></Table.Summary.Cell>
+                      <Table.Summary.Cell index={2} colSpan={2}></Table.Summary.Cell>
+                    </Table.Summary.Row>
+                  </>
+                );
+              }}
             />
           </div>
 
           <Row gutter={16}>
-            <Col span={12}><Form.Item name="ncc" label="Tên nhà cung cấp đề xuất (Nếu có)"><Input placeholder="-- Nhập tên NCC --" /></Form.Item></Col>
+            <Col span={12}><Form.Item name="ncc" label="Tên nhà cung cấp đề xuất (Nếu có)"><Select options={nccOptions} placeholder="-- Chọn NCC --" onChange={handleNccChange} allowClear showSearch /></Form.Item></Col>
             <Col span={12}><Form.Item name="nccMst" label="Mã số thuế NCC"><Input /></Form.Item></Col>
           </Row>
           
