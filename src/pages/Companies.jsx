@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Upload } from 'antd';
-import { Pencil, Trash2, Plus, Download, Upload as UploadIcon } from 'lucide-react';
+import { Pencil, Trash2, Plus, Download, Upload as UploadIcon, CheckSquare } from 'lucide-react';
+import Papa from 'papaparse';
 import { defaultDonVi } from '../data';
 
 const Companies = () => {
@@ -71,33 +72,45 @@ const Companies = () => {
   };
 
   const handleExport = () => {
-    const jsonStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const dataToExport = selectedRowKeys.length > 0 
+      ? data.filter((_, i) => selectedRowKeys.includes(i))
+      : data;
+      
+    if (dataToExport.length === 0) {
+      return message.warning('Không có dữ liệu để xuất');
+    }
+
+    const csv = Papa.unparse(dataToExport);
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'companies.json';
+    a.download = 'companies.csv';
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const handleImport = (file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const importedData = JSON.parse(e.target.result);
-        if (Array.isArray(importedData)) {
-          saveToStorage(importedData);
-          message.success('Nhập dữ liệu thành công');
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        if (results.data && results.data.length > 0) {
+          saveToStorage(results.data);
+          message.success('Nhập CSV thành công');
         } else {
-          message.error('File không hợp lệ');
+          message.error('File CSV trống hoặc không hợp lệ');
         }
-      } catch (error) {
-        message.error('Lỗi đọc file');
+      },
+      error: () => {
+        message.error('Lỗi đọc file CSV');
       }
-    };
-    reader.readAsText(file);
+    });
     return false; // prevent upload
+  };
+
+  const handleSelectAll = () => {
+    setSelectedRowKeys(data.map((_, index) => index));
   };
 
   const columns = [
@@ -126,12 +139,15 @@ const Companies = () => {
           <p className="page-subtitle" style={{ margin: '5px 0 0 0' }}>Quản lý danh sách các công ty thành viên trong hệ thống.</p>
         </div>
         <Space style={{ flexWrap: 'wrap' }}>
+          <Button icon={<CheckSquare size={16} />} onClick={handleSelectAll}>
+            Chọn tất cả
+          </Button>
           {selectedRowKeys.length > 0 && (
             <Popconfirm title={`Xóa ${selectedRowKeys.length} công ty đã chọn?`} onConfirm={handleBatchDelete} okText="Đồng ý" cancelText="Hủy">
               <Button danger icon={<Trash2 size={16} />}>Xóa ({selectedRowKeys.length})</Button>
             </Popconfirm>
           )}
-          <Upload beforeUpload={handleImport} showUploadList={false} accept=".json">
+          <Upload beforeUpload={handleImport} showUploadList={false} accept=".csv">
             <Button icon={<UploadIcon size={16} />}>Nhập</Button>
           </Upload>
           <Button icon={<Download size={16} />} onClick={handleExport}>Xuất</Button>

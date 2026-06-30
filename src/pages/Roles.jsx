@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Typography, Card, Tag, Button, Modal, Form, Input, Checkbox, Space, Popconfirm, message, Upload } from 'antd';
-import { ShieldCheck, Plus, Pencil, Trash2, Download, Upload as UploadIcon } from 'lucide-react';
+import { ShieldCheck, Plus, Pencil, Trash2, Download, Upload as UploadIcon, CheckSquare } from 'lucide-react';
+import Papa from 'papaparse';
 
 const { TextArea } = Input;
 
@@ -112,34 +113,66 @@ const Roles = () => {
     });
   };
 
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
   const handleExport = () => {
-    const jsonStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const dataToExport = selectedRowKeys.length > 0 
+      ? data.filter((_, i) => selectedRowKeys.includes(i))
+      : data;
+      
+    if (dataToExport.length === 0) {
+      return message.warning('Không có dữ liệu để xuất');
+    }
+
+    // Role permissions might be arrays, stringify them for CSV
+    const csvData = dataToExport.map(row => ({
+      ...row,
+      permissions: Array.isArray(row.permissions) ? row.permissions.join(';') : row.permissions
+    }));
+
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'roles.json';
+    a.download = 'roles.csv';
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const handleImport = (file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const importedData = JSON.parse(e.target.result);
-        if (Array.isArray(importedData)) {
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        if (results.data && results.data.length > 0) {
+          // Parse permissions back into arrays if needed
+          const importedData = results.data.map(row => ({
+            ...row,
+            permissions: typeof row.permissions === 'string' && row.permissions ? row.permissions.split(';') : row.permissions
+          }));
           setData(importedData);
-          message.success('Nhập dữ liệu thành công');
+          message.success('Nhập CSV thành công');
         } else {
-          message.error('File không hợp lệ');
+          message.error('File CSV trống hoặc không hợp lệ');
         }
-      } catch (error) {
-        message.error('Lỗi đọc file');
+      },
+      error: () => {
+        message.error('Lỗi đọc file CSV');
       }
-    };
-    reader.readAsText(file);
+    });
     return false;
+  };
+
+  const handleSelectAll = () => {
+    setSelectedRowKeys(data.map((_, index) => index));
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (newSelectedRowKeys) => {
+      setSelectedRowKeys(newSelectedRowKeys);
+    },
   };
 
   const columns = [
@@ -199,7 +232,10 @@ const Roles = () => {
           </p>
         </div>
         <Space style={{ flexWrap: 'wrap' }}>
-          <Upload beforeUpload={handleImport} showUploadList={false} accept=".json">
+          <Button icon={<CheckSquare size={16} />} onClick={handleSelectAll}>
+            Chọn tất cả
+          </Button>
+          <Upload beforeUpload={handleImport} showUploadList={false} accept=".csv">
             <Button icon={<UploadIcon size={16} />}>Nhập</Button>
           </Upload>
           <Button icon={<Download size={16} />} onClick={handleExport}>Xuất</Button>
@@ -211,8 +247,9 @@ const Roles = () => {
 
       <Card bordered={false} style={{ borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', overflowX: 'auto' }}>
         <Table 
+          rowSelection={rowSelection}
           columns={columns} 
-          dataSource={data} 
+          dataSource={data.map((item, i) => ({ ...item, key: i }))} 
           pagination={false} 
           bordered 
         />
