@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Typography, Card, Tag, Button, Modal, Form, Input, Checkbox, Space, Popconfirm, message, Upload } from 'antd';
+import { Table, Typography, Card, Tag, Button, Modal, Form, Input, Checkbox, Space, Popconfirm, message, Upload, Switch } from 'antd';
 import { ShieldCheck, Plus, Pencil, Trash2, Download, Upload as UploadIcon, CheckSquare } from 'lucide-react';
 import Papa from 'papaparse';
 
@@ -21,6 +21,8 @@ const permissionsList = [
 
 const defaultRolesData = [
   {
+    id: 'ROL001',
+    disabled: false,
     key: '1',
     role: 'Nhân viên',
     description: 'Người ra yêu cầu thu mua hàng hóa, dịch vụ cho bộ phận của mình.',
@@ -28,6 +30,8 @@ const defaultRolesData = [
     color: 'blue'
   },
   {
+    id: 'ROL002',
+    disabled: false,
     key: '2',
     role: 'Trưởng bộ phận',
     description: 'Người duyệt yêu cầu từ nhân viên trong phòng ban.',
@@ -35,6 +39,8 @@ const defaultRolesData = [
     color: 'green'
   },
   {
+    id: 'ROL003',
+    disabled: false,
     key: '3',
     role: 'Quản lý thu mua',
     description: 'Người phân bổ yêu cầu đã duyệt cho team thu mua.',
@@ -42,6 +48,8 @@ const defaultRolesData = [
     color: 'purple'
   },
   {
+    id: 'ROL004',
+    disabled: false,
     key: '4',
     role: 'Nhân sự thu mua',
     description: 'Người khảo sát sản phẩm, thu mua sản phẩm trực tiếp từ Nhà cung cấp.',
@@ -49,6 +57,8 @@ const defaultRolesData = [
     color: 'orange'
   },
   {
+    id: 'ROL005',
+    disabled: false,
     key: '5',
     role: 'Admin',
     description: 'Quản trị viên hệ thống có toàn quyền.',
@@ -102,10 +112,17 @@ const Roles = () => {
       };
 
       if (editingRecord !== null) {
-        newData[editingRecord.index] = recordToSave;
+        newData[editingRecord.index] = { ...editingRecord, ...recordToSave };
         message.success('Đã cập nhật vai trò');
       } else {
-        newData.push({ ...recordToSave, key: Date.now().toString() });
+        const maxId = data.reduce((max, item) => {
+          if (!item.id || !item.id.startsWith('ROL')) return max;
+          const num = parseInt(item.id.replace('ROL', ''), 10);
+          return num > max ? num : max;
+        }, 0);
+        const newId = `ROL${String(maxId + 1).padStart(3, '0')}`;
+        
+        newData.push({ id: newId, disabled: false, ...recordToSave, key: Date.now().toString() });
         message.success('Đã thêm vai trò mới');
       }
       setData(newData);
@@ -146,12 +163,35 @@ const Roles = () => {
       skipEmptyLines: true,
       complete: (results) => {
         if (results.data && results.data.length > 0) {
-          // Parse permissions back into arrays if needed
-          const importedData = results.data.map(row => ({
-            ...row,
-            permissions: typeof row.permissions === 'string' && row.permissions ? row.permissions.split(';') : row.permissions
-          }));
-          setData(importedData);
+          const newData = [...data];
+          let maxId = data.reduce((max, item) => {
+            if (!item.id || !item.id.startsWith('ROL')) return max;
+            const num = parseInt(item.id.replace('ROL', ''), 10);
+            return num > max ? num : max;
+          }, 0);
+
+          results.data.forEach(importedRow => {
+            if (typeof importedRow.disabled === 'string') {
+              importedRow.disabled = importedRow.disabled.toLowerCase() === 'true';
+            }
+            if (typeof importedRow.permissions === 'string' && importedRow.permissions) {
+              importedRow.permissions = importedRow.permissions.split(';');
+            }
+
+            if (importedRow.id) {
+              const index = newData.findIndex(item => item.id === importedRow.id);
+              if (index > -1) {
+                newData[index] = { ...newData[index], ...importedRow };
+              } else {
+                newData.push({ ...importedRow, key: Date.now().toString() + Math.random() });
+              }
+            } else {
+              maxId++;
+              newData.push({ ...importedRow, id: `ROL${String(maxId).padStart(3, '0')}`, key: Date.now().toString() + Math.random() });
+            }
+          });
+
+          setData(newData);
           message.success('Nhập CSV thành công');
         } else {
           message.error('File CSV trống hoặc không hợp lệ');
@@ -181,13 +221,19 @@ const Roles = () => {
       dataIndex: 'role',
       key: 'role',
       width: '20%',
-      render: (text, record) => <Tag color={record.color || 'default'} style={{ fontSize: '14px', padding: '4px 10px' }}>{text}</Tag>
+      render: (text, record) => (
+        <Space>
+          <Tag color={record.color || 'default'} style={{ fontSize: '14px', padding: '4px 10px', opacity: record.disabled ? 0.5 : 1 }}>{text}</Tag>
+          {record.disabled && <Tag color="error">Vô hiệu hóa</Tag>}
+        </Space>
+      )
     },
     {
       title: 'Mô tả',
       dataIndex: 'description',
       key: 'description',
-      width: '30%'
+      width: '30%',
+      render: (text, record) => <span style={{ opacity: record.disabled ? 0.5 : 1 }}>{text}</span>
     },
     {
       title: 'Quyền hạn trên Hệ thống',
@@ -268,6 +314,15 @@ const Roles = () => {
           <Form.Item name="role" label="Tên Vai trò" rules={[{ required: true }]}>
              <Input placeholder="Ví dụ: Kế toán trưởng..." disabled={editingRecord && (editingRecord.role === 'Admin' || editingRecord.role === 'Trưởng bộ phận')} />
           </Form.Item>
+          {editingRecord && (
+            <Form.Item 
+              name="disabled" 
+              label="Trạng thái" 
+              valuePropName="checked"
+            >
+              <Switch checkedChildren="Vô hiệu hóa" unCheckedChildren="Hoạt động" />
+            </Form.Item>
+          )}
           <Form.Item name="description" label="Mô tả">
              <TextArea rows={2} placeholder="Mô tả chức năng chính của vai trò..." />
           </Form.Item>

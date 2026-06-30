@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message, Upload } from 'antd';
+import { Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message, Upload, Switch, Tag } from 'antd';
 import { Pencil, Trash2, Plus, Download, Upload as UploadIcon, CheckSquare } from 'lucide-react';
 import Papa from 'papaparse';
 import { defaultNhanSu, defaultDepartments } from '../data';
@@ -95,10 +95,17 @@ const Users = () => {
       };
 
       if (editingRecord !== null) {
-        newData[editingRecord.index] = recordToSave;
+        newData[editingRecord.index] = { ...editingRecord, ...recordToSave };
         message.success('Đã cập nhật thông tin người dùng');
       } else {
-        newData.push(recordToSave);
+        const maxId = data.reduce((max, item) => {
+          if (!item.id || !item.id.startsWith('NSU')) return max;
+          const num = parseInt(item.id.replace('NSU', ''), 10);
+          return num > max ? num : max;
+        }, 0);
+        const newId = `NSU${String(maxId + 1).padStart(3, '0')}`;
+        
+        newData.push({ id: newId, disabled: false, ...recordToSave });
         message.success('Đã thêm người dùng mới');
       }
       saveToStorage(newData);
@@ -131,7 +138,32 @@ const Users = () => {
       skipEmptyLines: true,
       complete: (results) => {
         if (results.data && results.data.length > 0) {
-          saveToStorage(results.data);
+          const newData = [...data];
+          let maxId = data.reduce((max, item) => {
+            if (!item.id || !item.id.startsWith('NSU')) return max;
+            const num = parseInt(item.id.replace('NSU', ''), 10);
+            return num > max ? num : max;
+          }, 0);
+
+          results.data.forEach(importedRow => {
+            if (typeof importedRow.disabled === 'string') {
+              importedRow.disabled = importedRow.disabled.toLowerCase() === 'true';
+            }
+
+            if (importedRow.id) {
+              const index = newData.findIndex(item => item.id === importedRow.id);
+              if (index > -1) {
+                newData[index] = { ...newData[index], ...importedRow };
+              } else {
+                newData.push(importedRow);
+              }
+            } else {
+              maxId++;
+              newData.push({ ...importedRow, id: `NSU${String(maxId).padStart(3, '0')}` });
+            }
+          });
+
+          saveToStorage(newData);
           message.success('Nhập CSV thành công');
         } else {
           message.error('File CSV trống hoặc không hợp lệ');
@@ -149,12 +181,47 @@ const Users = () => {
   };
 
   const columns = [
-    { title: 'Họ và Tên', dataIndex: 'name', key: 'name', render: t => <strong>{t}</strong> },
-    { title: 'Phòng ban', dataIndex: 'dept', key: 'dept' },
-    { title: 'Vai trò', dataIndex: 'role', key: 'role', render: t => <span style={{ color: '#64748b' }}>{t || 'Nhân viên'}</span> },
-    { title: 'Trưởng bộ phận', dataIndex: 'manager', key: 'manager' },
-    { title: 'SĐT', dataIndex: 'phone', key: 'phone' },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
+    { 
+      title: 'Họ và Tên', 
+      dataIndex: 'name', 
+      key: 'name', 
+      render: (text, record) => (
+        <Space>
+          <strong style={{ opacity: record.disabled ? 0.5 : 1 }}>{text}</strong>
+          {record.disabled && <Tag color="error">Vô hiệu hóa</Tag>}
+        </Space>
+      )
+    },
+    { 
+      title: 'Phòng ban', 
+      dataIndex: 'dept', 
+      key: 'dept',
+      render: (text, record) => <span style={{ opacity: record.disabled ? 0.5 : 1 }}>{text}</span>
+    },
+    { 
+      title: 'Vai trò', 
+      dataIndex: 'role', 
+      key: 'role', 
+      render: (text, record) => <span style={{ color: '#64748b', opacity: record.disabled ? 0.5 : 1 }}>{text || 'Nhân viên'}</span> 
+    },
+    { 
+      title: 'Trưởng bộ phận', 
+      dataIndex: 'manager', 
+      key: 'manager',
+      render: (text, record) => <span style={{ opacity: record.disabled ? 0.5 : 1 }}>{text}</span>
+    },
+    { 
+      title: 'SĐT', 
+      dataIndex: 'phone', 
+      key: 'phone',
+      render: (text, record) => <span style={{ opacity: record.disabled ? 0.5 : 1 }}>{text}</span>
+    },
+    { 
+      title: 'Email', 
+      dataIndex: 'email', 
+      key: 'email',
+      render: (text, record) => <span style={{ opacity: record.disabled ? 0.5 : 1 }}>{text}</span>
+    },
     {
       title: 'Hành động', key: 'action', align: 'right',
       render: (_, record, index) => (
@@ -206,6 +273,15 @@ const Users = () => {
       <Modal title={editingRecord ? "Sửa Nhân sự" : "Thêm Nhân sự"} open={isModalOpen} onOk={handleOk} onCancel={() => setIsModalOpen(false)}>
         <Form form={form} layout="vertical">
           <Form.Item name="name" label="Họ và Tên" rules={[{ required: true }]}><Input /></Form.Item>
+          {editingRecord && (
+            <Form.Item 
+              name="disabled" 
+              label="Trạng thái" 
+              valuePropName="checked"
+            >
+              <Switch checkedChildren="Vô hiệu hóa" unCheckedChildren="Hoạt động" />
+            </Form.Item>
+          )}
           <Form.Item name="dept" label="Phòng ban">
             <Input placeholder="Nhập phòng ban..." />
           </Form.Item>

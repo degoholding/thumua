@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message, Upload } from 'antd';
+import { Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message, Upload, Switch, Tag } from 'antd';
 import { Pencil, Trash2, Plus, Download, Upload as UploadIcon, CheckSquare } from 'lucide-react';
 import Papa from 'papaparse';
 import { defaultDepartments, defaultNhanSu } from '../data';
@@ -73,10 +73,17 @@ const Departments = () => {
       const newManager = values.manager;
 
       if (editingRecord !== null) {
-        newData[editingRecord.index] = values;
+        newData[editingRecord.index] = { ...editingRecord, ...values };
         message.success('Đã cập nhật thông tin phòng ban');
       } else {
-        newData.push(values);
+        const maxId = data.reduce((max, item) => {
+          if (!item.id || !item.id.startsWith('PBA')) return max;
+          const num = parseInt(item.id.replace('PBA', ''), 10);
+          return num > max ? num : max;
+        }, 0);
+        const newId = `PBA${String(maxId + 1).padStart(3, '0')}`;
+        
+        newData.push({ id: newId, disabled: false, ...values });
         message.success('Đã thêm phòng ban mới');
       }
       
@@ -139,7 +146,32 @@ const Departments = () => {
       skipEmptyLines: true,
       complete: (results) => {
         if (results.data && results.data.length > 0) {
-          saveToStorage(results.data);
+          const newData = [...data];
+          let maxId = data.reduce((max, item) => {
+            if (!item.id || !item.id.startsWith('PBA')) return max;
+            const num = parseInt(item.id.replace('PBA', ''), 10);
+            return num > max ? num : max;
+          }, 0);
+
+          results.data.forEach(importedRow => {
+            if (typeof importedRow.disabled === 'string') {
+              importedRow.disabled = importedRow.disabled.toLowerCase() === 'true';
+            }
+
+            if (importedRow.id) {
+              const index = newData.findIndex(item => item.id === importedRow.id);
+              if (index > -1) {
+                newData[index] = { ...newData[index], ...importedRow };
+              } else {
+                newData.push(importedRow);
+              }
+            } else {
+              maxId++;
+              newData.push({ ...importedRow, id: `PBA${String(maxId).padStart(3, '0')}` });
+            }
+          });
+
+          saveToStorage(newData);
           message.success('Nhập CSV thành công');
         } else {
           message.error('File CSV trống hoặc không hợp lệ');
@@ -157,9 +189,29 @@ const Departments = () => {
   };
 
   const columns = [
-    { title: 'Tên Phòng ban', dataIndex: 'dept', key: 'dept', render: t => <strong>{t}</strong> },
-    { title: 'Tên Trưởng bộ phận', dataIndex: 'manager', key: 'manager' },
-    { title: 'Email Trưởng bộ phận', dataIndex: 'email', key: 'email' },
+    { 
+      title: 'Tên Phòng ban', 
+      dataIndex: 'dept', 
+      key: 'dept', 
+      render: (text, record) => (
+        <Space>
+          <strong style={{ opacity: record.disabled ? 0.5 : 1 }}>{text}</strong>
+          {record.disabled && <Tag color="error">Vô hiệu hóa</Tag>}
+        </Space>
+      )
+    },
+    { 
+      title: 'Tên Trưởng bộ phận', 
+      dataIndex: 'manager', 
+      key: 'manager',
+      render: (text, record) => <span style={{ opacity: record.disabled ? 0.5 : 1 }}>{text}</span>
+    },
+    { 
+      title: 'Email Trưởng bộ phận', 
+      dataIndex: 'email', 
+      key: 'email',
+      render: (text, record) => <span style={{ opacity: record.disabled ? 0.5 : 1 }}>{text}</span>
+    },
     {
       title: 'Hành động', key: 'action', align: 'right',
       render: (_, record, index) => (
@@ -211,6 +263,15 @@ const Departments = () => {
       <Modal title={editingRecord ? "Sửa Phòng ban" : "Thêm Phòng ban"} open={isModalOpen} onOk={handleOk} onCancel={() => setIsModalOpen(false)}>
         <Form form={form} layout="vertical">
           <Form.Item name="dept" label="Tên Phòng ban" rules={[{ required: true }]}><Input /></Form.Item>
+          {editingRecord && (
+            <Form.Item 
+              name="disabled" 
+              label="Trạng thái" 
+              valuePropName="checked"
+            >
+              <Switch checkedChildren="Vô hiệu hóa" unCheckedChildren="Hoạt động" />
+            </Form.Item>
+          )}
           <Form.Item 
             name="manager" 
             label="Trưởng bộ phận"
