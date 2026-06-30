@@ -1031,3 +1031,59 @@ export const defaultDepartments = [
         "email": "pkngan.idagroup@gmail.com"
     }
 ];
+
+export const defaultSupplierSurvey = [
+  {
+    maYc: 'PYC.NM.280326.01',
+    ngayTiepNhan: '2026-06-28',
+    tenNcc: 'CÔNG TY TNHH BAO BÌ ĐÔNG TÂY',
+    sdt: '0909123456',
+    danhGiaNspt: 'Đạt',
+    duyetTp: 'Duyệt',
+    nhomHang: 'Bao bì'
+  },
+  {
+    maYc: 'PYC.NM.280326.02',
+    ngayTiepNhan: '2026-06-29',
+    tenNcc: 'CÔNG TY TNHH QUẢNG CÁO MỘC ẤN',
+    sdt: '0918765432',
+    danhGiaNspt: 'Không đạt',
+    duyetTp: 'Không duyệt',
+    nhomHang: 'In ấn'
+  }
+];
+
+export const defaultProductSurvey = [
+  {
+    maYc: 'PYC.NM.280326.01',
+    tenNcc: 'CÔNG TY TNHH BAO BÌ ĐÔNG TÂY',
+    tenSp: 'Thùng carton 5 lớp',
+    dvtBaoGia: 'Cái',
+    khungSl: '500-1000',
+    giaKhungSl: 15000,
+    vat: 8,
+    ketQuaLab: 'Đạt',
+    duyetTp: 'Duyệt'
+  },
+  {
+    maYc: 'PYC.NM.280326.02',
+    tenNcc: 'CÔNG TY TNHH QUẢNG CÁO MỘC ẤN',
+    tenSp: 'Tem nhãn decal',
+    dvtBaoGia: 'Con',
+    khungSl: '1000-5000',
+    giaKhungSl: 500,
+    vat: 8,
+    ketQuaLab: 'Không đạt',
+    duyetTp: 'Không duyệt'
+  }
+];
+
+export const mockUsers = [
+  { username: 'nsyc', fullName: 'Nh�n s? Y�u C?u', role: 'NSYC' },
+  { username: 'tbp', fullName: 'Tru?ng B? Ph?n', role: 'TBP' },
+  { username: 'qltm', fullName: 'Qu?n L� Thu Mua', role: 'QLTM' },
+  { username: 'nstm1', fullName: 'NSTM Giang', role: 'NSTM' },
+  { username: 'nstm2', fullName: 'NSTM An', role: 'NSTM' },
+  { username: 'admin', fullName: 'Administrator', role: 'Admin' }
+];
+

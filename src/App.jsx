@@ -9,15 +9,15 @@ import Companies from './pages/Companies';
 import Intake from './pages/Intake';
 import Roles from './pages/Roles';
 import Login from './pages/Login';
+import SupplierSurvey from './pages/SupplierSurvey';
+import ProductSurvey from './pages/ProductSurvey';
+import PurchaseOrder from './pages/PurchaseOrder';
 
 const App = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => localStorage.getItem('user'));
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(storedUser);
-    }
+    // Component mounted
   }, []);
 
   const handleLogin = (username) => {
@@ -45,6 +45,9 @@ const App = () => {
             <Route path="companies" element={<Companies />} />
             <Route path="intake" element={<Intake />} />
             <Route path="roles" element={<Roles />} />
+            <Route path="supplier-survey" element={<SupplierSurvey />} />
+            <Route path="product-survey" element={<ProductSurvey />} />
+            <Route path="purchase-orders" element={<PurchaseOrder />} />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/login" replace />} />

@@ -19,7 +19,7 @@ const Login = ({ onLogin }) => {
         });
         window.google.accounts.id.renderButton(
           document.getElementById("google-login-button"),
-          { theme: "outline", size: "large", width: "100%", text: "continue_with" }
+          { theme: "outline", size: "large", text: "continue_with" }
         );
       }
     };
@@ -109,12 +109,27 @@ const Login = ({ onLogin }) => {
 
           {/* Google Login Button Container */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-            <div id="google-login-button" style={{ width: '100%' }}></div>
+            <div id="google-login-button"></div>
           </div>
 
           <Divider style={{ color: '#94a3b8', fontSize: '12px' }}>Hoặc đăng nhập nhanh để test</Divider>
 
           <Space direction="vertical" style={{ width: '100%' }} size="middle">
+            <Button 
+              block 
+              size="large" 
+              type="default"
+              icon={<Lock size={16} style={{ color: '#ef4444' }} />}
+              onClick={() => handleQuickLogin('admin')}
+              loading={loading === 'admin'}
+              style={{ textAlign: 'left', height: 'auto', padding: '12px 20px', borderRadius: '12px' }}
+            >
+              <div style={{ display: 'inline-block', marginLeft: '10px' }}>
+                <div style={{ fontWeight: 'bold', color: '#334155' }}>Administrators</div>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>Quản trị hệ thống</div>
+              </div>
+            </Button>
+
             <Button 
               block 
               size="large" 

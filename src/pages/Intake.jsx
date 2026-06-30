@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message, DatePicker, Checkbox, Row, Col, Tag } from 'antd';
-import { Pencil, Trash2, Plus, Upload, CheckCircle, XCircle, Printer } from 'lucide-react';
+import { Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message, DatePicker, Checkbox, Row, Col, Tag, Tooltip } from 'antd';
+import { Pencil, Trash2, Plus, Upload, CheckCircle, XCircle, Printer, Search, Package, ShoppingCart, Users, CheckSquare } from 'lucide-react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { defaultNcc, defaultDonVi, defaultNhanSu } from '../data';
+import { defaultNcc, defaultDonVi, defaultNhanSu, mockUsers } from '../data';
 
 const { TextArea } = Input;
 
 const Intake = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [form] = Form.useForm();
   
-  // Lấy user đăng nhập hiện tại
-  const currentUser = localStorage.getItem('user') || 'Admin';
+  // Lấy role và user từ Layout Context
+  const { currentRole, currentUser } = useOutletContext() || { currentRole: 'NSYC', currentUser: 'Admin' };
 
   // Hủy Yêu Cầu state
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -36,6 +38,14 @@ const Intake = () => {
   const [nccOptions, setNccData] = useState([]);
   const googleEmail = localStorage.getItem('googleEmail');
   const [googleNhanSu, setGoogleNhanSu] = useState(null);
+
+  // State for Assign (Phân bổ)
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [assigningRecord, setAssigningRecord] = useState(null);
+
+  // State for My Products (Tiếp nhận)
+  const [isMyProductsModalOpen, setIsMyProductsModalOpen] = useState(false);
+  const [myProductsRecord, setMyProductsRecord] = useState(null);
 
   useEffect(() => {
     // Tải dữ liệu dropdown từ localStorage hoặc fallback sang default
@@ -65,10 +75,11 @@ const Intake = () => {
       const mockData = [
         { 
           key: 1, pycCode: 'PYC-001', ngaytn: '2026-06-25', donvi: 'Dego Holding', 
-          bophan: 'Kế toán', mucdich: 'Mua văn phòng phẩm tháng 6', totalAmount: 1500000, status: 'Chờ duyệt',
+          bophan: 'Kế toán', mucdich: 'Mua văn phòng phẩm tháng 6', totalAmount: 1500000, status: 'Chờ TBP duyệt',
           history: [
             { time: '2026-06-25T08:00:00Z', user: 'user', action: 'Tạo phiếu yêu cầu', note: '' }
-          ]
+          ],
+          products: []
         }
       ];
       setData(mockData);
@@ -158,7 +169,7 @@ const Intake = () => {
         ngaytrakq: values.ngaytrakq ? values.ngaytrakq.format('YYYY-MM-DD') : null,
         products: products,
         totalAmount: products.reduce((sum, p) => sum + (p.amount || 0), 0),
-        status: editingRecord ? editingRecord.status : 'Chờ duyệt',
+        status: editingRecord ? editingRecord.status : 'Chờ TBP duyệt',
         pycCode: values.pycCode || `PYC-${Math.floor(Math.random() * 1000)}`
       };
 
@@ -174,7 +185,7 @@ const Intake = () => {
         newData[editingRecord.index] = updatedRecord;
         message.success('Đã cập nhật phiếu yêu cầu');
       } else {
-        const newRecord = { ...recordToSave, status: 'Chờ duyệt', history: [logEntry] };
+        const newRecord = { ...recordToSave, status: 'Chờ TBP duyệt', history: [logEntry] };
         newData.push({ ...newRecord, key: Date.now() });
         message.success('Đã thêm phiếu yêu cầu mới');
       }
@@ -224,20 +235,59 @@ const Intake = () => {
   const handleApprove = (index) => {
     const newData = [...data];
     const record = newData[index];
-    if (record.status !== 'Chờ duyệt') {
-      message.warning('Chỉ có thể duyệt phiếu ở trạng thái Chờ duyệt');
+    
+    let nextStatus = '';
+    if (currentRole === 'TBP' && record.status === 'Chờ TBP duyệt') {
+      nextStatus = 'Đã duyệt TBP';
+    } else if (currentRole === 'QLTM' && record.status === 'Đã duyệt TBP') {
+      nextStatus = 'Đã duyệt QLTM';
+    } else if (currentRole === 'Admin') {
+      if (record.status === 'Chờ TBP duyệt') nextStatus = 'Đã duyệt TBP';
+      else if (record.status === 'Đã duyệt TBP') nextStatus = 'Đã duyệt QLTM';
+    }
+    
+    if (!nextStatus) {
+      message.warning('Bạn không có quyền duyệt phiếu ở trạng thái này');
       return;
     }
-    record.status = 'Đã duyệt';
+
+    record.status = nextStatus;
     record.history = record.history || [];
     record.history.push({
       time: new Date().toISOString(),
-      user: currentUser,
-      action: 'Duyệt Phiếu Yêu Cầu',
+      user: currentUser || currentRole,
+      action: `Duyệt Phiếu -> ${nextStatus}`,
       note: ''
     });
     saveToStorage(newData);
-    message.success(`Đã duyệt phiếu ${record.pycCode}`);
+    message.success(`Đã chuyển trạng thái phiếu thành ${nextStatus}`);
+  };
+
+  const handleOpenAssign = (record, index) => {
+    setAssigningRecord({ ...record, index });
+    setIsAssignModalOpen(true);
+  };
+  
+  const handleSaveAssign = () => {
+    const newData = [...data];
+    newData[assigningRecord.index].products = assigningRecord.products;
+    saveToStorage(newData);
+    message.success('Đã lưu phân bổ');
+    setIsAssignModalOpen(false);
+  };
+
+  const handleOpenMyProducts = (record, index) => {
+    setMyProductsRecord({ ...record, index });
+    setIsMyProductsModalOpen(true);
+  };
+
+  const handleAcceptProduct = (productIndex) => {
+    const newData = [...data];
+    newData[myProductsRecord.index].products[productIndex].status = 'Đã tiếp nhận';
+    saveToStorage(newData);
+    // Refresh modal state
+    setMyProductsRecord(newData[myProductsRecord.index]);
+    message.success('Đã tiếp nhận sản phẩm');
   };
 
   const handlePrint = (record) => {
@@ -295,16 +345,36 @@ const Intake = () => {
       }
     },
     {
-      title: 'Hành động', key: 'action', align: 'center', width: 160, fixed: 'right',
-      render: (_, record, index) => (
+      title: 'Hành động', key: 'action', align: 'center', width: 240, fixed: 'right',
+      render: (_, record, index) => {
+        const isMyPyc = currentRole === 'NSTM' && (record.products || []).some(p => p.assignedTo === currentUser);
+        return (
         <Space size="small" style={{ whiteSpace: 'nowrap' }}>
+          {(currentRole === 'QLTM' || currentRole === 'Admin') && record.status === 'Đã duyệt QLTM' && (
+            <Tooltip title="Phân bổ NSTM">
+              <Button type="text" icon={<Users size={16} style={{ color: '#ec4899' }} />} onClick={() => handleOpenAssign(record, index)} />
+            </Tooltip>
+          )}
+          {isMyPyc && (
+            <Tooltip title="Sản phẩm được giao">
+              <Button type="text" icon={<CheckSquare size={16} style={{ color: '#059669' }} />} onClick={() => handleOpenMyProducts(record, index)} />
+            </Tooltip>
+          )}
+          {record.status === 'Đã duyệt QLTM' && (
+            <>
+              <Tooltip title="Tạo Đơn Đặt Hàng (PO)">
+                <Button type="text" icon={<ShoppingCart size={16} style={{ color: '#f59e0b' }} />} onClick={() => navigate(`/purchase-orders?pyc=${record.pycCode}`)} />
+              </Tooltip>
+            </>
+          )}
           <Button type="text" icon={<Printer size={16} style={{ color: '#8b5cf6' }} />} onClick={() => handlePrint(record)} title="In phiếu" />
           <Button type="text" icon={<Pencil size={16} style={{ color: '#0275d8' }} />} onClick={() => handleEdit(record, index)} title="Xem/Sửa" />
           <Popconfirm title="Xóa phiếu này?" onConfirm={() => handleDelete(index)}>
             <Button type="text" danger icon={<Trash2 size={16} />} title="Xóa" />
           </Popconfirm>
         </Space>
-      )
+        );
+      }
     }
   ];
 
@@ -416,7 +486,11 @@ const Intake = () => {
               In Phiếu
             </Button>
           ),
-          (editingRecord && editingRecord.status === 'Chờ duyệt') && (
+          (editingRecord && (
+            (currentRole === 'TBP' && editingRecord.status === 'Chờ TBP duyệt') || 
+            (currentRole === 'QLTM' && editingRecord.status === 'Đã duyệt TBP') ||
+            (currentRole === 'Admin' && (editingRecord.status === 'Chờ TBP duyệt' || editingRecord.status === 'Đã duyệt TBP'))
+          )) && (
             <Button 
               key="reject" 
               danger 
@@ -425,7 +499,11 @@ const Intake = () => {
               Từ chối (Hủy phiếu)
             </Button>
           ),
-          (editingRecord && editingRecord.status === 'Chờ duyệt') && (
+          (editingRecord && (
+            (currentRole === 'TBP' && editingRecord.status === 'Chờ TBP duyệt') || 
+            (currentRole === 'QLTM' && editingRecord.status === 'Đã duyệt TBP') ||
+            (currentRole === 'Admin' && (editingRecord.status === 'Chờ TBP duyệt' || editingRecord.status === 'Đã duyệt TBP'))
+          )) && (
             <Button 
               key="approve" 
               type="primary" 
@@ -954,6 +1032,98 @@ const Intake = () => {
           })()}
         </div>
       )}
+      <Modal
+        title={"Phân bổ NSTM cho PYC: " + (assigningRecord?.pycCode || '')}
+        open={isAssignModalOpen}
+        onCancel={() => setIsAssignModalOpen(false)}
+        onOk={handleSaveAssign}
+        width={800}
+        okText="Lưu Phân bổ"
+        cancelText="Hủy"
+      >
+        <Table 
+          dataSource={assigningRecord?.products || []}
+          pagination={false}
+          rowKey={(r, i) => i}
+          columns={[
+            { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name' },
+            { title: 'Số lượng', dataIndex: 'qty', key: 'qty' },
+            { 
+              title: 'Giao cho NSTM', 
+              key: 'assign',
+              render: (_, record, i) => (
+                <Select
+                  style={{ width: '100%' }}
+                  value={record.assignedTo}
+                  placeholder="-- Chọn NSTM --"
+                  options={mockUsers.filter(u => u.role === 'NSTM').map(u => ({ label: u.fullName, value: u.username }))}
+                  onChange={(val) => {
+                    const newData = {...assigningRecord};
+                    newData.products[i].assignedTo = val;
+                    newData.products[i].status = 'Chờ tiếp nhận';
+                    setAssigningRecord(newData);
+                  }}
+                  allowClear
+                />
+              )
+            },
+            {
+              title: 'Trạng thái',
+              key: 'status',
+              dataIndex: 'status',
+              render: (st) => <Tag color={st === 'Đã tiếp nhận' ? 'green' : 'orange'}>{st || 'Chưa giao'}</Tag>
+            }
+          ]}
+        />
+      </Modal>
+
+      <Modal
+        title={"Sản phẩm được giao - " + (myProductsRecord?.pycCode || '')}
+        open={isMyProductsModalOpen}
+        onCancel={() => setIsMyProductsModalOpen(false)}
+        footer={[<Button key="close" onClick={() => setIsMyProductsModalOpen(false)}>Đóng</Button>]}
+        width={900}
+      >
+        <Table 
+          dataSource={(myProductsRecord?.products || []).filter(p => p.assignedTo === currentUser)}
+          pagination={false}
+          rowKey={(r, i) => i}
+          columns={[
+            { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name' },
+            { title: 'Số lượng', dataIndex: 'qty', key: 'qty' },
+            { title: 'Trạng thái', dataIndex: 'status', key: 'status', render: st => <Tag color={st === 'Đã tiếp nhận' ? 'green' : 'orange'}>{st}</Tag> },
+            {
+              title: 'Hành động',
+              key: 'action',
+              render: (_, record) => {
+                // Find original index
+                const originalIndex = myProductsRecord.products.findIndex(p => p === record);
+                if (record.status !== 'Đã tiếp nhận') {
+                  return (
+                    <Button type="primary" size="small" onClick={() => handleAcceptProduct(originalIndex)}>
+                      Chấp thuận
+                    </Button>
+                  );
+                } else {
+                  return (
+                    <Space>
+                      <Button size="small" type="dashed" onClick={() => {
+                        setIsMyProductsModalOpen(false);
+                        navigate(`/supplier-survey?pyc=${myProductsRecord.pycCode}`);
+                      }}>KS NCC</Button>
+                      <Button size="small" type="dashed" onClick={() => {
+                        setIsMyProductsModalOpen(false);
+                        navigate(`/product-survey?pyc=${myProductsRecord.pycCode}`);
+                      }}>KS SP</Button>
+                    </Space>
+                  );
+                }
+              }
+            }
+          ]}
+        />
+      </Modal>
+
     </div>
   );
 };
