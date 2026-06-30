@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message } from 'antd';
-import { Pencil, Trash2, Plus } from 'lucide-react';
+import { Table, Button, Modal, Form, Input, Select, Space, Popconfirm, message, Upload } from 'antd';
+import { Pencil, Trash2, Plus, Download, Upload as UploadIcon } from 'lucide-react';
 import { defaultNhanSu, defaultDepartments } from '../data';
 
 const Users = () => {
@@ -105,6 +105,36 @@ const Users = () => {
     });
   };
 
+  const handleExport = () => {
+    const jsonStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'users.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        if (Array.isArray(importedData)) {
+          saveToStorage(importedData);
+          message.success('Nhập dữ liệu thành công');
+        } else {
+          message.error('File không hợp lệ');
+        }
+      } catch (error) {
+        message.error('Lỗi đọc file');
+      }
+    };
+    reader.readAsText(file);
+    return false;
+  };
+
   const columns = [
     { title: 'Họ và Tên', dataIndex: 'name', key: 'name', render: t => <strong>{t}</strong> },
     { title: 'Phòng ban', dataIndex: 'dept', key: 'dept' },
@@ -138,6 +168,10 @@ const Users = () => {
               <Button danger icon={<Trash2 size={16} />}>Xóa ({selectedRowKeys.length})</Button>
             </Popconfirm>
           )}
+          <Upload beforeUpload={handleImport} showUploadList={false} accept=".json">
+            <Button icon={<UploadIcon size={16} />}>Nhập</Button>
+          </Upload>
+          <Button icon={<Download size={16} />} onClick={handleExport}>Xuất</Button>
           <Button type="primary" icon={<Plus size={16} />} onClick={handleAdd}>
             Thêm Người dùng
           </Button>

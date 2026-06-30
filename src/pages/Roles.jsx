@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Typography, Card, Tag, Button, Modal, Form, Input, Checkbox, Space, Popconfirm, message } from 'antd';
-import { ShieldCheck, Plus, Pencil, Trash2 } from 'lucide-react';
+import { Table, Typography, Card, Tag, Button, Modal, Form, Input, Checkbox, Space, Popconfirm, message, Upload } from 'antd';
+import { ShieldCheck, Plus, Pencil, Trash2, Download, Upload as UploadIcon } from 'lucide-react';
 
 const { TextArea } = Input;
 
@@ -112,6 +112,36 @@ const Roles = () => {
     });
   };
 
+  const handleExport = () => {
+    const jsonStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'roles.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        if (Array.isArray(importedData)) {
+          setData(importedData);
+          message.success('Nhập dữ liệu thành công');
+        } else {
+          message.error('File không hợp lệ');
+        }
+      } catch (error) {
+        message.error('Lỗi đọc file');
+      }
+    };
+    reader.readAsText(file);
+    return false;
+  };
+
   const columns = [
     {
       title: 'Tên Vai trò',
@@ -168,9 +198,15 @@ const Roles = () => {
             Định nghĩa các vai trò và gán quyền hạn chi tiết trên hệ thống.
           </p>
         </div>
-        <Button type="primary" icon={<Plus size={16} />} onClick={handleAdd}>
-          Thêm Vai trò
-        </Button>
+        <Space style={{ flexWrap: 'wrap' }}>
+          <Upload beforeUpload={handleImport} showUploadList={false} accept=".json">
+            <Button icon={<UploadIcon size={16} />}>Nhập</Button>
+          </Upload>
+          <Button icon={<Download size={16} />} onClick={handleExport}>Xuất</Button>
+          <Button type="primary" icon={<Plus size={16} />} onClick={handleAdd}>
+            Thêm Vai trò
+          </Button>
+        </Space>
       </div>
 
       <Card bordered={false} style={{ borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', overflowX: 'auto' }}>

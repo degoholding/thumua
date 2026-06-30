@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { ClipboardList, Search, CheckCircle, Package, Truck, 
   CreditCard, BookOpen, AlertTriangle, FileText, 
-  Repeat, BarChart2, Building2, Users, Folder, Shield, ShoppingCart 
+  Repeat, BarChart2, Building2, Users, Folder, Shield, ShoppingCart, Store 
 } from 'lucide-react';
 import { Menu, Dropdown, Avatar, message, Select, Modal, Input, Button } from 'antd';
 import { mockUsers } from '../data';
@@ -83,7 +83,7 @@ const Layout = ({ user, onLogout }) => {
             {!collapsed && <div className="nav-group-title">DANH MỤC</div>}
             <ul className="nav-list">
               <NavLink to="/suppliers" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
-                <Building2 className="nav-icon" size={18} /> {!collapsed && "Nhà cung cấp"}
+                <Store className="nav-icon" size={18} /> {!collapsed && "Nhà cung cấp"}
               </NavLink>
               <NavLink to="/companies" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
                 <Building2 className="nav-icon" size={18} /> {!collapsed && "Công ty thành viên"}
